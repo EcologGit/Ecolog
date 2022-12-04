@@ -21,12 +21,13 @@ class Districts(models.Model):
 class Events(models.Model):
     eventid = models.IntegerField(db_column='EventID', primary_key=True)  # Field name made lowercase.
     name = models.CharField(max_length=64)
-    description = models.CharField(max_length=1)
+    description = models.CharField(max_length=300)
     statusid = models.IntegerField(db_column='StatusID')  # Field name made lowercase.
     adress = models.CharField(max_length=256)
     latitude_n = models.DecimalField(db_column='latitude_N', max_digits=8, decimal_places=6)  # Field name made lowercase.
     longitude_e = models.DecimalField(db_column='longitude_E', max_digits=7, decimal_places=5)  # Field name made lowercase.
-    photo = models.TextField(blank=True, null=True)  # This field type is a guess.
+    # photo = models.TextField(blank=True, null=True)  # This field type is a guess.
+    photo = models.ImageField(blank=True, null=True)
     time = models.DateTimeField()
     time_of_close = models.DateTimeField()
     reportid = models.IntegerField(db_column='ReportID', blank=True, null=True)  # Field name made lowercase.
@@ -54,10 +55,10 @@ class GarbagePoints(models.Model):
     name = models.CharField(max_length=64)
     admareaid = models.IntegerField(db_column='admareaID', blank=True, null=True)  # Field name made lowercase.
     districtid = models.IntegerField(db_column='districtID', blank=True, null=True)  # Field name made lowercase.
-    transport = models.CharField(max_length=1)
+    transport = models.CharField(max_length=300)
     adress = models.CharField(max_length=256)
     locality = models.CharField(max_length=256)
-    description = models.CharField(max_length=1)
+    description = models.CharField(max_length=300)
     latitude_n = models.DecimalField(db_column='latitude_N', max_digits=8, decimal_places=6)  # Field name made lowercase.
     longitude_e = models.DecimalField(db_column='longitude_E', max_digits=7, decimal_places=5)  # Field name made lowercase.
     working_hoursid = models.IntegerField(db_column='working_hoursID')  # Field name made lowercase.
@@ -72,17 +73,17 @@ class GarbagePoints(models.Model):
 class Objects(models.Model):
     objectid = models.IntegerField(db_column='ObjectID', primary_key=True)  # Field name made lowercase.
     name = models.CharField(max_length=64)
-    description = models.CharField(max_length=1)
+    description = models.CharField(max_length=300)
     category_obj_id = models.IntegerField(db_column='category_obj_ID')  # Field name made lowercase.
     latitude_n = models.DecimalField(db_column='latitude_N', max_digits=8, decimal_places=6)  # Field name made lowercase.
     longitude_e = models.DecimalField(db_column='longitude_E', max_digits=7, decimal_places=5)  # Field name made lowercase.
     locality = models.CharField(max_length=256)
-    transport = models.CharField(max_length=1)
+    transport = models.CharField(max_length=300)
     adress = models.CharField(max_length=256)
     organization_inn = models.DecimalField(max_digits=12, decimal_places=0, blank=True, null=True)
     working_hoursid = models.IntegerField(db_column='working_hoursID', blank=True, null=True)  # Field name made lowercase.
     has_parking = models.BooleanField(blank=True, null=True)
-    photo = models.BinaryField(blank=True, null=True)
+    photo = models.ImageField(blank=True, null=True)
     admareaid = models.IntegerField(db_column='admareaID', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -115,8 +116,9 @@ class Rates(models.Model):
 
 class Reports(models.Model):
     reportid = models.IntegerField(db_column='ReportID', primary_key=True)  # Field name made lowercase.
-    description = models.CharField(max_length=1)
-    photo = models.TextField(blank=True, null=True)  # This field type is a guess.
+    description = models.CharField(max_length=300)
+    # photo = models.TextField(blank=True, null=True)  # This field type is a guess.
+    photo = models.ImageField(blank=True, null=True)
     time = models.DateTimeField()
     statusid_r = models.IntegerField(db_column='StatusID_R')  # Field name made lowercase.
     eventid = models.IntegerField(db_column='EventID', blank=True, null=True)  # Field name made lowercase.
@@ -130,7 +132,7 @@ class Reports(models.Model):
 
 class Results(models.Model):
     resultid = models.IntegerField(db_column='ResultID', primary_key=True)  # Field name made lowercase.
-    description = models.CharField(max_length=1)
+    description = models.CharField(max_length=300)
     time = models.DateTimeField()
     amount = models.DecimalField(max_digits=65535, decimal_places=65535)
     wasteid = models.IntegerField(db_column='WasteID')  # Field name made lowercase.
@@ -154,7 +156,7 @@ class Roles(models.Model):
 class Routes(models.Model):
     routeid = models.IntegerField(db_column='RouteID', primary_key=True)  # Field name made lowercase.
     name = models.CharField(max_length=64)
-    description = models.CharField(max_length=1)
+    description = models.CharField(max_length=300)
     start_n = models.DecimalField(db_column='start_N', max_digits=8, decimal_places=6)  # Field name made lowercase.
     start_e = models.DecimalField(db_column='start_E', max_digits=7, decimal_places=5)  # Field name made lowercase.
     end_n = models.DecimalField(db_column='end_N', max_digits=8, decimal_places=6)  # Field name made lowercase.
@@ -162,11 +164,11 @@ class Routes(models.Model):
     diffictulityid = models.IntegerField(db_column='diffictulityID')  # Field name made lowercase.
     lenght = models.FloatField()
     duration = models.TextField()  # This field type is a guess.
-    transport = models.CharField(max_length=1)
+    transport = models.CharField(max_length=300)
     locality = models.CharField(max_length=256)
     price = models.IntegerField(blank=True, null=True)
-    photo = models.TextField(blank=True, null=True)  # This field type is a guess.
-
+    # photo = models.TextField(blank=True, null=True)  # This field type is a guess.
+    photo = models.ImageField(blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'Routes'
@@ -188,7 +190,8 @@ class Users(models.Model):
     surname = models.CharField(max_length=32)
     birth_date = models.DateTimeField()
     locality = models.CharField(max_length=256)
-    photo = models.TextField(blank=True, null=True)  # This field type is a guess.
+    # photo = models.TextField(blank=True, null=True)  # This field type is a guess.
+    photo = models.ImageField(blank=True, null=True)
     sexid = models.IntegerField(db_column='SexID')  # Field name made lowercase.
     login = models.CharField(max_length=32)
     password = models.CharField(max_length=64)
