@@ -9,8 +9,8 @@ from django.db import models
 
 
 class Districts(models.Model):
-    districtid = models.OneToOneField('Admarea', models.DO_NOTHING, db_column='districtID', primary_key=True)  # Field name made lowercase.
-    admareaid = models.IntegerField(db_column='admareaID')  # Field name made lowercase.
+    districtid = models.OneToOneField('Objects', models.DO_NOTHING, db_column='districtID', primary_key=True)  # Field name made lowercase.
+    admareaid = models.OneToOneField('Admarea', models.DO_NOTHING, db_column='admareaID')  # Field name made lowercase.
     name = models.CharField(max_length=64)
 
     class Meta:
@@ -51,16 +51,16 @@ class Favourites(models.Model):
 class GarbagePoints(models.Model):
     pointid = models.AutoField(db_column='PointID', primary_key=True)  # Field name made lowercase.
     name = models.CharField(max_length=64)
-    admareaid = models.IntegerField(db_column='admareaID', blank=True, null=True)  # Field name made lowercase.
-    districtid = models.IntegerField(db_column='districtID', blank=True, null=True)  # Field name made lowercase.
+    admareaid = models.OneToOneField('Admarea', models.DO_NOTHING, db_column='admareaID', blank=True, null=True)  # Field name made lowercase.
+    districtid = models.OneToOneField('Districts', models.DO_NOTHING, db_column='districtID', blank=True, null=True)  # Field name made lowercase.
     transport = models.CharField(max_length=100)
     adress = models.CharField(max_length=256)
     locality = models.CharField(max_length=256)
     description = models.CharField(max_length=100)
     latitude_n = models.DecimalField(db_column='latitude_N', max_digits=8, decimal_places=6, max_length=9)  # Field name made lowercase.
     longitude_e = models.DecimalField(db_column='longitude_E', max_digits=8, decimal_places=5, max_length=9)  # Field name made lowercase.
-    working_hoursid = models.IntegerField(db_column='working_hoursID')  # Field name made lowercase.
-    organization_inn = models.DecimalField(unique=True, max_digits=12, decimal_places=0, max_length=12)
+    working_hoursid = models.OneToOneField('WorkingHours', models.DO_NOTHING, db_column='working_hoursID')  # Field name made lowercase.
+    organization_inn = models.ForeignKey('Organizations', models.DO_NOTHING, unique=True, db_column='organization_inn')
 
     class Meta:
         managed = False
@@ -101,11 +101,19 @@ class Organizations(models.Model):
 
 
 class Rates(models.Model):
+    estimation = {
+        ('A', '1'),
+        ('B', '2'),
+        ('C', '3'),
+        ('D', '4'),
+        ('E', '5')
+    }
+
     rateid = models.AutoField(db_column='RateID', primary_key=True)  # Field name made lowercase.
     reportid = models.ForeignKey('Reports', models.DO_NOTHING, db_column='ReportID')  # Field name made lowercase.
-    rate1 = models.IntegerField(db_column='Rate1')  # Field name made lowercase.
-    rate2 = models.IntegerField(db_column='Rate2')  # Field name made lowercase.
-    rate3 = models.IntegerField(db_column='Rate3')  # Field name made lowercase.
+    rate1 = models.CharField(db_column='Rate1', max_length=1, default='A', choices=estimation)  # Field name made lowercase.
+    rate2 = models.CharField(db_column='Rate2', max_length=1, default='B', choices=estimation)  # Field name made lowercase.
+    rate3 = models.CharField(db_column='Rate3', max_length=1, default='C', choices=estimation)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -115,20 +123,19 @@ class Rates(models.Model):
 class Reports(models.Model):
     reportid = models.AutoField(db_column='ReportID', primary_key=True)  # Field name made lowercase.
     description = models.CharField(max_length=100)
-    photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
+    photo = models.TextField(blank=True, null=True)  # This field type is a guess.
     time = models.DateTimeField()
     statusid_r = models.ForeignKey('StatusesR', models.DO_NOTHING, db_column='StatusID_R')  # Field name made lowercase.
     eventid = models.ForeignKey(Events, models.DO_NOTHING, db_column='EventID', blank=True, null=True)  # Field name made lowercase.
     userid = models.ForeignKey('Users', models.DO_NOTHING, db_column='UserID', blank=True, null=True)  # Field name made lowercase.
-    rateid = models.IntegerField(db_column='RateID', blank=True, null=True)  # Field name made lowercase.
-    # r = models.ForeignKey('Routes', models.DO_NOTHING, db_column='r', blank=True, null=True)
-    # routeid = models.ForeignKey('Routes', models.DO_NOTHING, db_column='RouteID', blank=True, null=True)  # Field name made lowercase.
-    pointid = models.ForeignKey(GarbagePoints, models.DO_NOTHING, db_column='PointID', blank=True, null=True)  # Field name made lowercase.
-    objectid = models.ForeignKey(Objects, models.DO_NOTHING, db_column='ObjectID', blank=True, null=True)  # Field name made lowercase.
+    routeid = models.ForeignKey('Routes', models.DO_NOTHING, db_column='RouteID', blank=True, null=True)  # Field name made lowercase.
+    pointid = models.ForeignKey('GarbagePoints', models.DO_NOTHING, db_column='PointID', blank=True, null=True)  # Field name made lowercase.
+    objectid = models.ForeignKey('Objects', models.DO_NOTHING, db_column='ObjectID', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'Reports'
+
 
 
 class ReportsEvents(models.Model):
@@ -354,9 +361,9 @@ class DjangoSession(models.Model):
 
 
 class EventsOnObjects(models.Model):
-    eventid = models.IntegerField(db_column='EventID')  # Field name made lowercase.
-    objectid = models.IntegerField(db_column='ObjectID')  # Field name made lowercase.
-    eo_id = models.IntegerField(db_column='EO_ID', primary_key=True)  # Field name made lowercase.
+    eventid = models.OneToOneField(Events, models.DO_NOTHING, db_column='EventID')  # Field name made lowercase.
+    objectid = models.OneToOneField(Objects, models.DO_NOTHING, db_column='ObjectID')  # Field name made lowercase.
+    eo_id = models.AutoField(db_column='EO_ID', primary_key=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -364,8 +371,8 @@ class EventsOnObjects(models.Model):
 
 
 class EventsOnRoutes(models.Model):
-    eventid = models.IntegerField(db_column='EventID', primary_key=True)  # Field name made lowercase.
-    routeid = models.IntegerField(db_column='RouteID')  # Field name made lowercase.
+    eventid = models.OneToOneField(Events, models.DO_NOTHING, db_column='EventID', primary_key=True)  # Field name made lowercase.
+    routeid = models.OneToOneField(Routes, models.DO_NOTHING, db_column='RouteID')  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -403,8 +410,8 @@ class RoleOnPermission(models.Model):
         unique_together = (('roleid', 'permissionid'),)
 
 
-class Routes(models.Model):
-    r = models.IntegerField(primary_key=True)
+class Route(models.Model):
+    route_id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=100)
     start_n = models.DecimalField(db_column='start_N', max_digits=8, decimal_places=6)  # Field name made lowercase.
@@ -421,7 +428,7 @@ class Routes(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'routes'
+        db_table = 'route'
 
 
 class Statuses(models.Model):
