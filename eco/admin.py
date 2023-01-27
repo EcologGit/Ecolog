@@ -123,6 +123,11 @@ class CategoryWorkingHours(admin.ModelAdmin):
     list_display = ('workin_hoursid', 'day_of_week')
 
 
+@admin.register(CategoryObjDic)
+class CategoryCategoryObjDic(admin.ModelAdmin):
+    list_display = ('category_obj_dic', 'name')
+
+
 admin.site.register(RoleOnPermission)
 admin.site.register(UserHasRole)
 # admin.site.register(AuthGroupPermissions)

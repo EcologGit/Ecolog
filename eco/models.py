@@ -83,7 +83,7 @@ class Objects(models.Model):
     objectid = models.AutoField(db_column='ObjectID', primary_key=True)  # Field name made lowercase.
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=100)
-    category_obj_id = models.IntegerField(db_column='category_obj_ID')  # Field name made lowercase.
+    category_obj_id = models.OneToOneField('CategoryObjDic', models.DO_NOTHING, db_column='category_obj_ID')  # Field name made lowercase.
     latitude_n = models.DecimalField(db_column='latitude_N', max_digits=8, decimal_places=6, max_length=9)  # Field name made lowercase.
     longitude_e = models.DecimalField(db_column='longitude_E', max_digits=8, decimal_places=6, max_length=9)  # Field name made lowercase.
     locality = models.CharField(max_length=256)
@@ -157,8 +157,8 @@ class Reports(models.Model):
         db_table = 'Reports'
 
 
-
 class ReportsEvents(models.Model):
+    reports_events_id = models.AutoField(db_column='Reports_Events_Id', primary_key=True)  # Field name made lowercase.
     reports_reportid = models.OneToOneField('Reports', models.DO_NOTHING, db_column='Reports_ReportID')  # Field name made lowercase.
     events_reportid = models.OneToOneField('Events', models.DO_NOTHING, db_column='Events_ReportID', blank=True, null=True)  # Field name made lowercase.
 
@@ -542,3 +542,15 @@ class WorkingHours(models.Model):
     class Meta:
         managed = False
         db_table = 'working_hours'
+
+
+class CategoryObjDic(models.Model):
+    category_obj_dic = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=64, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        managed = False
+        db_table = 'category_obj_dic'
