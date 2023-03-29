@@ -11,8 +11,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
-import no_secrets
+
 # from secrets import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = no_secrets.SECRET_KEY
+SECRET_KEY = 'django-insecure-*7h@!+-l!hu*h$3(1az*xe(ii251#&9)*om^so2ytbi+hc)f_x'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,7 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'eco'
+    'eco.apps.EcoConfig',
+    'rest_framework',
+    'review.apps.ReviewConfig',
+    'users.apps.UsersConfig',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -77,12 +83,12 @@ WSGI_APPLICATION = 'Ecolog_django.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'happy',
-        'USER': 'happy',
-        'PASSWORD': 'happy',
-        'HOST': '37.228.117.174',
-        'PORT': '5432',
+        'USER': 'root',
+        'PASSWORD': 'свой_пароль',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
         # 'default': {
         #     'ENGINE': 'django.db.backends.sqlite3',
         #     'NAME': BASE_DIR / 'ecolog',
@@ -127,3 +133,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'eco.CustomUser'
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+
+    "TOKEN_REFRESH_SERIALIZER":'users.serializers.CustomTokenRefreshSerializer',
+}
