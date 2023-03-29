@@ -9,6 +9,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class CustomUser(AbstractUser):
@@ -57,7 +58,7 @@ class StatusesDict(models.Model):
 
 class Districts(models.Model):
     district_id = models.AutoField(primary_key=True)
-    admarea_id = models.ForeignKey(Admarea, models.SET_NULL, null=True, blank=True)  
+    admarea_id = models.ForeignKey(Admarea, models.SET_NULL, null=True, blank=True, related_name='districts')  
     name = models.CharField(max_length=64)
 
     def __str__(self):
@@ -66,7 +67,7 @@ class Districts(models.Model):
 
 class Favourites(models.Model):
     fav_id = models.AutoField(primary_key=True)  
-    user_id = models.ForeignKey(CustomUser, models.CASCADE)  
+    user_id = models.ForeignKey(CustomUser, models.CASCADE, related_name='favourites')  
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
@@ -99,8 +100,8 @@ class Reports(models.Model):
     description = models.CharField(max_length=100)
     photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
     created_at = models.DateTimeField(auto_now_add=True)
-    status_id_r = models.ForeignKey(StatusesRDict, models.DO_NOTHING)  
-    user_id = models.ForeignKey(CustomUser, models.CASCADE)
+    status_id_r = models.ForeignKey(StatusesRDict, models.DO_NOTHING, related_name='reports')  
+    user_id = models.ForeignKey(CustomUser, models.CASCADE, related_name='reports')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
@@ -114,7 +115,7 @@ class Reports(models.Model):
 class SortPoints(models.Model):
     point_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=64)
-    admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True)
+    admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True, related_name='sort_points')
     district_id = models.OneToOneField(Districts, models.SET_NULL, blank=True, null=True)
     transport_description = models.CharField(max_length=100)
     adress = models.CharField(max_length=256)
@@ -165,10 +166,10 @@ class NatureObjects(models.Model):
     object_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=100)
-    category_obj_id = models.ForeignKey(CategoryObjDict, models.SET_NULL, related_name='category', null=True)
+    category_obj_id = models.ForeignKey(CategoryObjDict, models.SET_NULL, related_name='nature_objects', null=True)
     latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
     longitude_e = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)
-    admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True)
+    admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True, related_name='nature_objects')
     district_id = models.OneToOneField(Districts, models.SET_NULL, blank=True, null=True)
     locality = models.CharField(max_length=256)
     transport_description = models.CharField(max_length=100)
@@ -188,7 +189,7 @@ class Events(models.Model):
     event_id = models.AutoField(primary_key=True)  
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=100)
-    status_id = models.ForeignKey(StatusesDict, models.SET_NULL, null=True)  
+    status_id = models.ForeignKey(StatusesDict, models.SET_NULL, null=True, related_name='events')  
     adress = models.CharField(max_length=256)
     latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
     longitude_e = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
@@ -206,18 +207,18 @@ class Events(models.Model):
 
 class Rates(models.Model):
     rate_id = models.AutoField(primary_key=True)  
-    report_id = models.ForeignKey(Reports, models.CASCADE)  
-    rate1 = models.IntegerField()  
-    rate2 = models.IntegerField()  
-    rate3 = models.IntegerField()
+    report_id = models.OneToOneField(Reports, models.CASCADE, related_name='rates', unique=True)  
+    rate1 = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    rate2 = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    rate3 = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
 
 
 class Results(models.Model):
     result_id = models.AutoField(primary_key=True)  
     created_at = models.DateTimeField(auto_now_add=True)
-    report_id = models.ForeignKey(Reports, models.CASCADE)
+    report_id = models.ForeignKey(Reports, models.CASCADE, related_name='results')
     amount = models.DecimalField(max_digits=30, decimal_places=30)
-    waste_id = models.ForeignKey(WasteTypes, models.CASCADE)
+    waste_id = models.ForeignKey(WasteTypes, models.CASCADE, related_name='results')
     aproved = models.BooleanField(blank=True, null=True) 
 
 
