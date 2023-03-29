@@ -7,7 +7,9 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.contrib.auth.models import AbstractUser
- 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+
 
 class CustomUser(AbstractUser):
     SEX = (
@@ -62,25 +64,42 @@ class Districts(models.Model):
         return self.name
 
 
-class NatureObjects(models.Model):
-    object_id = models.AutoField(primary_key=True)
+class Favourites(models.Model):
+    fav_id = models.AutoField(primary_key=True)  
+    user_id = models.ForeignKey(CustomUser, models.CASCADE)  
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
+        ]
+
+
+class StatusesRDict(models.Model):
+    status_id_r = models.AutoField(primary_key=True)  
     name = models.CharField(max_length=64)
-    description = models.CharField(max_length=100)
-    category_obj_id = models.ForeignKey(CategoryObjDict, models.SET_NULL, related_name='category', null=True)
-    latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
-    longitude_e = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)
-    admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True)
-    district_id = models.OneToOneField(Districts, models.SET_NULL, blank=True, null=True)
-    locality = models.CharField(max_length=256)
-    transport_description = models.CharField(max_length=100)
-    adress = models.CharField(max_length=256)
-    organization_inn = models.OneToOneField(Organizations, models.SET_NULL, blank=True, null=True)
-    has_parking = models.BooleanField(blank=True, null=True)
-    photo = models.ImageField(blank=True, null=True)
-    schedule = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.name
+
+
+class Reports(models.Model):
+    report_id = models.AutoField(primary_key=True)  
+    description = models.CharField(max_length=100)
+    photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
+    created_at = models.DateTimeField(auto_now_add=True)
+    status_id_r = models.ForeignKey(StatusesRDict, models.DO_NOTHING)  
+    user_id = models.ForeignKey(CustomUser, models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
+        ]
 
 
 class Events(models.Model):
@@ -94,6 +113,28 @@ class Events(models.Model):
     photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
     time_start = models.DateTimeField()
     time_of_close = models.DateTimeField()
+    reports = GenericRelation(Reports)
+    favourites = GenericRelation(Favourites)
+
+    def __str__(self):
+        return self.name
+
+
+class SortPoints(models.Model):
+    point_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=64)
+    admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True)
+    district_id = models.OneToOneField(Districts, models.SET_NULL, blank=True, null=True)
+    transport_description = models.CharField(max_length=100)
+    adress = models.CharField(max_length=256)
+    locality = models.CharField(max_length=256)
+    description = models.CharField(max_length=100)
+    latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
+    longitude_e = models.DecimalField(max_digits=8, decimal_places=5, max_length=9)  
+    organization_inn = models.OneToOneField(Organizations, models.CASCADE)
+    schedule = models.CharField(max_length=100, blank=True, null=True)
+    reports = GenericRelation(Reports)
+    favourites = GenericRelation(Favourites)
 
     def __str__(self):
         return self.name
@@ -121,57 +162,34 @@ class Routes(models.Model):
     locality = models.CharField(max_length=256)
     price = models.IntegerField()
     photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
+    reports = GenericRelation(Reports)
+    favourites = GenericRelation(Favourites)
 
     def __str__(self):
         return self.name
 
 
-class SortPoints(models.Model):
-    point_id = models.AutoField(primary_key=True)
+class NatureObjects(models.Model):
+    object_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=64)
+    description = models.CharField(max_length=100)
+    category_obj_id = models.ForeignKey(CategoryObjDict, models.SET_NULL, related_name='category', null=True)
+    latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
+    longitude_e = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)
     admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True)
     district_id = models.OneToOneField(Districts, models.SET_NULL, blank=True, null=True)
+    locality = models.CharField(max_length=256)
     transport_description = models.CharField(max_length=100)
     adress = models.CharField(max_length=256)
-    locality = models.CharField(max_length=256)
-    description = models.CharField(max_length=100)
-    latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
-    longitude_e = models.DecimalField(max_digits=8, decimal_places=5, max_length=9)  
-    organization_inn = models.OneToOneField(Organizations, models.CASCADE)
+    organization_inn = models.OneToOneField(Organizations, models.SET_NULL, blank=True, null=True)
+    has_parking = models.BooleanField(blank=True, null=True)
+    photo = models.ImageField(blank=True, null=True)
     schedule = models.CharField(max_length=100, blank=True, null=True)
+    reports = GenericRelation(Reports)
+    favourites = GenericRelation(Favourites)
 
     def __str__(self):
         return self.name
-
-
-class Favourites(models.Model):
-    fav_id = models.AutoField(primary_key=True)  
-    user_id = models.ForeignKey(CustomUser, models.CASCADE)  
-    event_id = models.ForeignKey(Events, models.DO_NOTHING, blank=True, null=True)  
-    object_id = models.ForeignKey(NatureObjects, models.DO_NOTHING, blank=True, null=True)  
-    route_id = models.ForeignKey(Routes, models.DO_NOTHING, blank=True, null=True)  
-    point_id = models.ForeignKey(SortPoints, models.DO_NOTHING, blank=True, null=True)  
-
-
-class StatusesRDict(models.Model):
-    status_id_r = models.AutoField(primary_key=True)  
-    name = models.CharField(max_length=64)
-
-    def __str__(self):
-        return self.name
-
-
-class Reports(models.Model):
-    report_id = models.AutoField(primary_key=True)  
-    description = models.CharField(max_length=100)
-    photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
-    created_at = models.DateTimeField(auto_now_add=True)
-    status_id_r = models.ForeignKey(StatusesRDict, models.DO_NOTHING)  
-    event_id = models.ForeignKey(Events, models.DO_NOTHING, blank=True, null=True)  
-    user_id = models.ForeignKey(CustomUser, models.DO_NOTHING, blank=True, null=True)  
-    route_id = models.ForeignKey(Routes, models.DO_NOTHING, blank=True, null=True)
-    object_id = models.ForeignKey(NatureObjects, models.DO_NOTHING, blank=True, null=True)
-    point_id = models.ForeignKey(SortPoints, models.DO_NOTHING, blank=True, null=True)
 
 
 class Rates(models.Model):
