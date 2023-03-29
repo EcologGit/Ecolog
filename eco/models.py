@@ -85,6 +85,15 @@ class StatusesRDict(models.Model):
         return self.name
 
 
+class WasteTypes(models.Model):
+    waste_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=64)
+    unit_of_waste = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.name
+
+
 class Reports(models.Model):
     report_id = models.AutoField(primary_key=True)  
     description = models.CharField(max_length=100)
@@ -102,24 +111,6 @@ class Reports(models.Model):
         ]
 
 
-class Events(models.Model):
-    event_id = models.AutoField(primary_key=True)  
-    name = models.CharField(max_length=64)
-    description = models.CharField(max_length=100)
-    status_id = models.ForeignKey(StatusesDict, models.SET_NULL, null=True)  
-    adress = models.CharField(max_length=256)
-    latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
-    longitude_e = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
-    photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
-    time_start = models.DateTimeField()
-    time_of_close = models.DateTimeField()
-    reports = GenericRelation(Reports)
-    favourites = GenericRelation(Favourites)
-
-    def __str__(self):
-        return self.name
-
-
 class SortPoints(models.Model):
     point_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=64)
@@ -135,6 +126,7 @@ class SortPoints(models.Model):
     schedule = models.CharField(max_length=100, blank=True, null=True)
     reports = GenericRelation(Reports)
     favourites = GenericRelation(Favourites)
+    wast_types = models.ManyToManyField(WasteTypes)
 
     def __str__(self):
         return self.name
@@ -192,21 +184,32 @@ class NatureObjects(models.Model):
         return self.name
 
 
+class Events(models.Model):
+    event_id = models.AutoField(primary_key=True)  
+    name = models.CharField(max_length=64)
+    description = models.CharField(max_length=100)
+    status_id = models.ForeignKey(StatusesDict, models.SET_NULL, null=True)  
+    adress = models.CharField(max_length=256)
+    latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
+    longitude_e = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
+    photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
+    time_start = models.DateTimeField()
+    time_of_close = models.DateTimeField()
+    reports = GenericRelation(Reports)
+    favourites = GenericRelation(Favourites)
+    nature_objects = models.ManyToManyField(NatureObjects, blank=True)
+    routes = models.ManyToManyField(Routes, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Rates(models.Model):
     rate_id = models.AutoField(primary_key=True)  
     report_id = models.ForeignKey(Reports, models.CASCADE)  
     rate1 = models.IntegerField()  
     rate2 = models.IntegerField()  
-    rate3 = models.IntegerField()  
-
-
-class WasteTypes(models.Model):
-    waste_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=64)
-    unit_of_waste = models.CharField(max_length=64)
-
-    def __str__(self):
-        return self.name
+    rate3 = models.IntegerField()
 
 
 class Results(models.Model):
@@ -216,25 +219,6 @@ class Results(models.Model):
     amount = models.DecimalField(max_digits=30, decimal_places=30)
     waste_id = models.ForeignKey(WasteTypes, models.CASCADE)
     aproved = models.BooleanField(blank=True, null=True) 
-
-
-class EventsOnNatureObjects(models.Model):
-    event_id = models.ForeignKey(Events, models.CASCADE)  
-    object_id = models.ForeignKey(NatureObjects, models.CASCADE)  
-    eo_id = models.AutoField(primary_key=True)  
-
-    class Meta:
-        unique_together = (('event_id', 'object_id'),)
-
-
-class EventsOnRoutes(models.Model):
-    event_id = models.ForeignKey(Events, models.CASCADE)  
-    route_id = models.ForeignKey(Routes, models.CASCADE)
-
-
-class PointTypes(models.Model):
-    waste_id = models.ForeignKey(WasteTypes, models.CASCADE)  
-    point_id = models.ForeignKey(SortPoints,  models.CASCADE)  
 
 
 '''class WorkingHours(models.Model):
