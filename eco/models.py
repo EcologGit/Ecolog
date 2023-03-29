@@ -207,7 +207,7 @@ class Events(models.Model):
 
 class Rates(models.Model):
     rate_id = models.AutoField(primary_key=True)  
-    report_id = models.OneToOneField(Reports, models.CASCADE, related_name='rates', unique=True)  
+    report_id = models.OneToOneField(Reports, models.CASCADE, related_name='rates')  
     rate1 = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     rate2 = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     rate3 = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
