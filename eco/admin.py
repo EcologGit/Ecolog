@@ -10,133 +10,85 @@ class CategoryDistricts(admin.ModelAdmin):
 
 @admin.register(Events)
 class CategoryEvents(admin.ModelAdmin):
-    list_display = ('name', 'eventid')
+    list_display = ('name', 'event_id')
 
 
 @admin.register(Favourites)
 class CategoryFavourites(admin.ModelAdmin):
-    list_display = ('favid',)
+    list_display = ('fav_id',)
 
 
-@admin.register(GarbagePoints)
+@admin.register(SortPoints)
 class CategoryGarbagePoints(admin.ModelAdmin):
-    list_display = ('pointid', 'name')
+    list_display = ('point_id', 'name')
 
 
-@admin.register(Objects)
+@admin.register(NatureObjects)
 class CategoryObjects(admin.ModelAdmin):
-    list_display = ('objectid', 'name')
+    list_display = ('object_id', 'name')
 
 
 @admin.register(Organizations)
 class CategoryOrganizations(admin.ModelAdmin):
-    list_display = ('organization_inn', 'name')
+    list_display = ('inn', 'name')
 
 
 @admin.register(Rates)
 class CategoryRates(admin.ModelAdmin):
-    list_display = ('rateid',)
+    list_display = ('rate_id',)
 
 
 @admin.register(Reports)
 class CategoryReports(admin.ModelAdmin):
-    list_display = ('reportid', 'description')
+    list_display = ('report_id', 'description')
 
 
 @admin.register(Results)
 class CategoryResults(admin.ModelAdmin):
-    list_display = ('resultid', 'description')
+    list_display = ('result_id',)
 
 
-@admin.register(Roles)
-class CategoryRoles(admin.ModelAdmin):
-    list_display = ('roleid', 'role_name')
-
-
-@admin.register(Route)
+@admin.register(Routes)
 class CategoryRoute(admin.ModelAdmin):
     list_display = ('route_id', 'name')
 
 
-@admin.register(SexDic)
-class CategorySexDic(admin.ModelAdmin):
-    list_display = ('sexid', 'name')
-
-
-@admin.register(Users)
-class CategoryUsers(admin.ModelAdmin):
-    list_display = ('userid', 'name')
-
-
 @admin.register(WasteTypes)
 class CategoryWasteTypes(admin.ModelAdmin):
-    list_display = ('wasteid', 'name')
+    list_display = ('waste_id', 'name')
 
 
 @admin.register(Admarea)
 class CategoryAdmarea(admin.ModelAdmin):
-    list_display = ('admareaid', 'name')
+    list_display = ('admarea_id', 'name')
 
 
-@admin.register(ReportsEvents)
-class CategoryReportsEvents(admin.ModelAdmin):
-    list_display = ('reports_reportid',)
-
-
-@admin.register(Difictulites)
-class CategoryDifictulites(admin.ModelAdmin):
-    list_display = ('diffictulityid', 'name')
-
-
-@admin.register(EventsOnObjects)
+@admin.register(EventsOnNatureObjects)
 class CategoryEventsOnObjects(admin.ModelAdmin):
     list_display = ('eo_id',)
 
 
 @admin.register(EventsOnRoutes)
 class CategoryEventsOnRoutes(admin.ModelAdmin):
-    list_display = ('eventid',)
-
-
-@admin.register(Permission)
-class CategoryPermission(admin.ModelAdmin):
-    list_display = ('permission_id', 'name_of_premission')
+    list_display = ('event_id',)
 
 
 @admin.register(PointTypes)
 class CategoryPointTypes(admin.ModelAdmin):
-    list_display = ('wasteid',)
+    list_display = ('waste_id',)
 
 
-@admin.register(Statuses)
+@admin.register(StatusesDict)
 class CategoryStatuses(admin.ModelAdmin):
-    list_display = ('statusid', 'name')
+    list_display = ('status_id', 'name')
 
 
-@admin.register(StatusesR)
+@admin.register(StatusesRDict)
 class CategoryStatusesR(admin.ModelAdmin):
-    list_display = ('statusid_r', 'name')
+    list_display = ('status_id_r', 'name')
 
 
-@admin.register(WorkingHours)
-class CategoryWorkingHours(admin.ModelAdmin):
-    list_display = ('workin_hoursid', 'day_of_week')
-
-
-@admin.register(CategoryObjDic)
+@admin.register(CategoryObjDict)
 class CategoryCategoryObjDic(admin.ModelAdmin):
-    list_display = ('category_obj_dic', 'name')
+    list_display = ('category_obj_id', 'name')
 
-
-admin.site.register(RoleOnPermission)
-admin.site.register(UserHasRole)
-# admin.site.register(AuthGroupPermissions)
-# admin.site.register(AuthPermission)
-# admin.site.register(AuthUser)
-# admin.site.register(AuthUserGroups)
-# admin.site.register(AuthUserUserPermissions)
-# admin.site.register(DjangoAdminLog)
-# admin.site.register(DjangoContentType)
-# admin.site.register(DjangoMigrations)
-# admin.site.register(DjangoSession)
-# Register your models here.
