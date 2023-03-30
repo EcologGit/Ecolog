@@ -178,7 +178,7 @@ class NatureObjects(models.Model):
     has_parking = models.BooleanField(blank=True, null=True)
     photo = models.ImageField(blank=True, null=True)
     schedule = models.CharField(max_length=100, blank=True, null=True)
-    reports = GenericRelation(Reports)
+    reports = GenericRelation(Reports, related_query_name='nature_object')
     favourites = GenericRelation(Favourites)
 
     def __str__(self):
@@ -208,9 +208,9 @@ class Events(models.Model):
 class Rates(models.Model):
     rate_id = models.AutoField(primary_key=True)  
     report_id = models.OneToOneField(Reports, models.CASCADE, related_name='rates')  
-    rate1 = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    rate2 = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    rate3 = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    availability = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    beauty = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    purity = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
 
 
 class Results(models.Model):
