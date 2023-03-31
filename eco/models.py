@@ -155,7 +155,7 @@ class Routes(models.Model):
     locality = models.CharField(max_length=256)
     price = models.IntegerField()
     photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
-    reports = GenericRelation(Reports)
+    reports = GenericRelation(Reports, related_query_name='routes')
     favourites = GenericRelation(Favourites)
 
     def __str__(self):
@@ -186,7 +186,7 @@ class NatureObjects(models.Model):
 
 
 class Events(models.Model):
-    event_id = models.AutoField(primary_key=True)  
+    event_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=100)
     status_id = models.ForeignKey(StatusesDict, models.SET_NULL, null=True, related_name='events')  
@@ -196,7 +196,7 @@ class Events(models.Model):
     photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
     time_start = models.DateTimeField()
     time_of_close = models.DateTimeField()
-    reports = GenericRelation(Reports)
+    reports = GenericRelation(Reports, related_query_name='events')
     favourites = GenericRelation(Favourites)
     nature_objects = models.ManyToManyField(NatureObjects, blank=True)
     routes = models.ManyToManyField(Routes, blank=True)
