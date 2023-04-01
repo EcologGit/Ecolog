@@ -217,7 +217,7 @@ class Results(models.Model):
     result_id = models.AutoField(primary_key=True)  
     created_at = models.DateTimeField(auto_now_add=True)
     report_id = models.ForeignKey(Reports, models.CASCADE, related_name='results')
-    amount = models.DecimalField(max_digits=30, decimal_places=30)
+    amount = models.DecimalField(max_digits=5, decimal_places=2)
     waste_id = models.ForeignKey(WasteTypes, models.CASCADE, related_name='results')
     aproved = models.BooleanField(blank=True, null=True) 
 
