@@ -1,7 +1,6 @@
 from eco.models import Rates, Events, NatureObjects, Routes, SortPoints, Reports
 from django.db.models import Avg, F, Sum, Q, ExpressionWrapper, FloatField
-from django.db.models import QuerySet
-from django.db.models import Model
+from django.db.models import QuerySet, Model
 from datetime import datetime
 from geopy.distance import geodesic
 from django.contrib.contenttypes.models import ContentType

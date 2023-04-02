@@ -11,7 +11,7 @@ from review.serializers import ReadonlyNatureObjectsWithAvgRatesSerializer, Read
 from review.serializers import OneNatureObjectSerializer, EventListInfotSerializer, ReportsForObjectSeriralizer
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import NotFound, APIException
-from review.config import OBJECT_TYPE_MAP
+from review.services.format import object_type_handler
 # Create your views here.
 
 class GetPlacesView(ListAPIView):
@@ -103,13 +103,8 @@ class GetReportsForObjectView(ListAPIView):
     serializer_class = ReportsForObjectSeriralizer
 
     def get_queryset(self):
-        try:
-            model_object = OBJECT_TYPE_MAP[self.kwargs['object_type']]
-            queryset = get_reports_for_object(model_object, self.kwargs['object_id'])
-        except KeyError:
-            raise NotFound
-
-        return queryset
+        return object_type_handler(get_reports_for_object, self.kwargs['object_type'], 
+                                   self.kwargs['object_id'])
 
 
 class GetNearestSortPoints(ListAPIView):
