@@ -3,6 +3,7 @@ from django.urls import path, include
 from .views import *
 
 urlpatterns = [
+    path('reports/<str:object_type>/<int:object_id>/', GetReportsForObjectView.as_view()),
     path('places/', GetPlacesView.as_view()),
     path('places/<int:id>/', GetOnePlaceView.as_view()),
     path('routes/', GetRoutesView.as_view()),
