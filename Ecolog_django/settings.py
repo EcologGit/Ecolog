@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-
+import no_secrets
 
 # from secrets import *
 
@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*7h@!+-l!hu*h$3(1az*xe(ii251#&9)*om^so2ytbi+hc)f_x'
+SECRET_KEY = no_secrets.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -83,12 +83,12 @@ WSGI_APPLICATION = 'Ecolog_django.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'happy',
-        'USER': 'root',
-        'PASSWORD': 'свой_пароль',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'ecolog_db',
+        'USER': 'pt_admin',
+        'PASSWORD': 'e+ght31wkb_q',
+        'HOST': '81.163.30.36',
+        'PORT': '5432',
         # 'default': {
         #     'ENGINE': 'django.db.backends.sqlite3',
         #     'NAME': BASE_DIR / 'ecolog',
