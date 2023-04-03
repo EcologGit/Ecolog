@@ -12,6 +12,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
+
 class CustomUser(AbstractUser):
     SEX = (
         ('M', 'Мужской'),
@@ -66,7 +67,7 @@ class Districts(models.Model):
 
 
 class Favourites(models.Model):
-    fav_id = models.AutoField(primary_key=True)  
+    fav_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(CustomUser, models.CASCADE, related_name='favourites')  
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -114,6 +115,7 @@ class Reports(models.Model):
 
 class SortPoints(models.Model):
     point_id = models.AutoField(primary_key=True)
+    photo = models.ImageField(blank=True, null=True)
     name = models.CharField(max_length=64)
     admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True, related_name='sort_points')
     district_id = models.OneToOneField(Districts, models.SET_NULL, blank=True, null=True)
