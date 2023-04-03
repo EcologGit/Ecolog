@@ -77,7 +77,7 @@ class ReadOnlyListSortPointsSerializer(ModelSerializer):
         model = SortPoints
         fields = [
             'point_id', 'name', 'locality', 'schedule',
-            'description', 'wast_types',
+            'description', 'wast_types', 'photo',
         ]
 
 
@@ -128,4 +128,4 @@ class NearestSortPointsSerialzier(ModelSerializer):
 
     class Meta:
         model = SortPoints
-        fields = ('pk', 'name', 'schedule',)
+        fields = ('pk', 'name', 'schedule', 'photo')

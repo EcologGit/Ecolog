@@ -124,7 +124,7 @@ class GetNearestSortPoint(ListAPIView):
         try:
             model_object = OBJECT_TYPE_MAP[self.kwargs['object_type']]
             queryset = get_nearest_sort_points(model_object, self.kwargs['object_id'], 
-                                                      'name', 'pk', 'schedule')
+                                                      'name', 'pk', 'schedule', 'photo')
         except KeyError:
             raise NotFound
         
