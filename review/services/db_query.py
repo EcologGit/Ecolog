@@ -98,6 +98,29 @@ def get_reports_information(object_with_reports: Model) -> dict:
                         )
     return reports_info
 
+
+def get_nearest_sort_points(coor_objects: tuple, *args) -> dict:
+
+    def get_distance(x):
+        return geodesic(coor_objects, (x.get('latitude_n'), x.get('longitude_e'))).km
+    
+    query = SortPoints.objects.values('latitude_n', 'longitude_e', *args)
+    sort_points = filter(lambda x: get_distance(x) < KM_DISTANCE_NEAR_POINT, query)
+    return sort_points
+
+
+def get_reports_for_object(object_type: Model, id: int) -> QuerySet:
+    model_id = ContentType.objects.get_for_model(object_type).pk
+    return Reports.objects.filter(Q(content_type=model_id) & Q(object_id=id)).prefetch_related('rates').select_related('user_id')
+
+
+def get_actual_events_for_object(object_type: Model, id: int) -> QuerySet:
+    if object_type is NatureObjects:
+        return get_events_actual().filter(nature_objects__pk=id)
+    elif object_type is Routes:
+        return get_events_actual().filter(route_objects__pk=id)
+
+
 '''def test_query():
     query = NatureObjects.objects \
                         .values('pk') \
@@ -115,20 +138,3 @@ def get_reports_information(object_with_reports: Model) -> dict:
                                 ) \
                         .filter(pk=1)
     return query'''
-
-
-def get_nearest_sort_points(coor_objects: tuple, *args) -> dict:
-
-    def get_distance(x):
-        return geodesic(coor_objects, (x.get('latitude_n'), x.get('longitude_e'))).km
-    
-    query = SortPoints.objects.values('latitude_n', 'longitude_e', *args)
-    sort_points = filter(lambda x: get_distance(x) < KM_DISTANCE_NEAR_POINT, query)
-    return sort_points
-
-
-def get_reports_for_object(object_type: Model, id: int) -> QuerySet:
-    model_id = ContentType.objects.get_for_model(object_type).pk
-    return Reports.objects.filter(Q(content_type=model_id) & Q(object_id=id)).prefetch_related('rates').select_related('user_id')
-
-

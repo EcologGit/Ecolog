@@ -1,7 +1,7 @@
 from review.services.db_query import get_nature_objects_with_avg_rates, get_events_with_avg_rates
 from review.services.db_query import get_routes_with_avg_rates, get_list_sort_points_with_waste_types, get_object_by_id
 from review.services.db_query import get_reports_information, get_events_actual, get_nearest_sort_points
-from review.services.db_query import get_reports_for_object
+from review.services.db_query import get_reports_for_object, get_actual_events_for_object
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView
@@ -12,6 +12,7 @@ from review.serializers import OneNatureObjectSerializer, EventListInfotSerializ
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import NotFound, APIException
 from review.services.format import object_type_handler
+from review.config import OBJECT_TYPE_MAP
 # Create your views here.
 
 class GetPlacesView(ListAPIView):
@@ -103,9 +104,23 @@ class GetReportsForObjectView(ListAPIView):
     serializer_class = ReportsForObjectSeriralizer
 
     def get_queryset(self):
-        return object_type_handler(get_reports_for_object, self.kwargs['object_type'], 
-                                   self.kwargs['object_id'])
+        try:
+            model_object = OBJECT_TYPE_MAP[self.kwargs['object_type']]
+            queryset = get_reports_for_object(model_object, self.kwargs['object_id'])
+        except KeyError:
+            raise NotFound
+        
+        return queryset
 
 
-class GetNearestSortPoints(ListAPIView):
-    pass
+class GetEventsForModelView(ListAPIView):
+    serializer_class = EventListInfotSerializer
+    
+    def get_queryset(self):
+        try:
+            model_object = OBJECT_TYPE_MAP[self.kwargs['object_type']]
+            queryset = get_actual_events_for_object(model_object, self.kwargs['object_id'])
+        except KeyError:
+            raise NotFound
+        
+        return queryset
