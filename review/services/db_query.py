@@ -6,6 +6,7 @@ from geopy.distance import geodesic
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.exceptions import NotFound
 from review.config import OBJECT_TYPE_MAP, KM_DISTANCE_NEAR_POINT
+from django.shortcuts import get_object_or_404
 '''
     ПРИМЕЧАНИЕ:
     Если нет ни одного объекта в бд, то выведет строку с None - значениями
@@ -99,13 +100,26 @@ def get_reports_information(object_with_reports: Model) -> dict:
     return reports_info
 
 
-def get_nearest_sort_points(coor_objects: tuple, *args) -> dict:
-
-    def get_distance(x):
+def get_nearest_sort_points(object_type: Model, id: int, *args) -> dict:
+    def get_distance(coor_objects, x) -> float:
         return geodesic(coor_objects, (x.get('latitude_n'), x.get('longitude_e'))).km
     
     query = SortPoints.objects.values('latitude_n', 'longitude_e', *args)
-    sort_points = filter(lambda x: get_distance(x) < KM_DISTANCE_NEAR_POINT, query)
+
+    try:
+        if object_type is NatureObjects:
+            object = NatureObjects.objects.get(pk=id)
+            coor_objects = (object.latitude_n, object.longitude_e)
+            sort_points = filter(lambda x: get_distance(coor_objects, x) < KM_DISTANCE_NEAR_POINT, query)
+        elif object_type is Routes:
+            object = Routes.objects.get(pk=id)
+            coor_objects_begin = (object.start_n, object.start_e)
+            coor_objects_end = (object.end_n, object.end_e)
+            sort_points = filter(lambda x: get_distance(coor_objects_begin, x) < KM_DISTANCE_NEAR_POINT 
+                                 or get_distance(coor_objects_end, x), query)
+    except Exception:
+        raise NotFound
+
     return sort_points
 
 

@@ -9,6 +9,7 @@ from eco.models import NatureObjects, Routes, Events, SortPoints, Favourites
 from review.serializers import ReadonlyEventsWithAvgRatesSerializer, ReadOnlyListSortPointsSerializer
 from review.serializers import ReadonlyNatureObjectsWithAvgRatesSerializer, ReadOnlyRoutesWithAvgRatesSerializer
 from review.serializers import OneNatureObjectSerializer, EventListInfotSerializer, ReportsForObjectSeriralizer
+from review.serializers import NearestSortPointsSerialzier
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import NotFound, APIException
 from review.services.format import object_type_handler
@@ -36,21 +37,11 @@ class GetOnePlaceView(APIView):
         
             nature_object_serializer = OneNatureObjectSerializer(instance=nature_object)
 
-            reports_information = get_reports_information(nature_object)
-            
-            nearest_sort_points = get_nearest_sort_points((nature_object.latitude_n, nature_object.longitude_e), 
-                                                      'name', 'point_id', 'schedule')
-         
-         
         except Exception:
             raise APIException
-        
-        
 
         return Response({'object_info': nature_object_serializer.data,
-                          'statistic': reports_information,
                           'events': actual_events.data,
-                          'nearest_sort_points': nearest_sort_points,
                           })
 
 
@@ -109,7 +100,7 @@ class GetReportsForObjectView(ListAPIView):
             queryset = get_reports_for_object(model_object, self.kwargs['object_id'])
         except KeyError:
             raise NotFound
-        
+
         return queryset
 
 
@@ -120,6 +111,20 @@ class GetEventsForModelView(ListAPIView):
         try:
             model_object = OBJECT_TYPE_MAP[self.kwargs['object_type']]
             queryset = get_actual_events_for_object(model_object, self.kwargs['object_id'])
+        except KeyError:
+            raise NotFound
+        
+        return queryset
+
+
+class GetNearestSortPoint(ListAPIView):
+    serializer_class = NearestSortPointsSerialzier
+    
+    def get_queryset(self):
+        try:
+            model_object = OBJECT_TYPE_MAP[self.kwargs['object_type']]
+            queryset = get_nearest_sort_points(model_object, self.kwargs['object_id'], 
+                                                      'name', 'pk', 'schedule')
         except KeyError:
             raise NotFound
         

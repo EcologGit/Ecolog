@@ -122,3 +122,10 @@ class ReportsForObjectSeriralizer(ModelSerializer):
     class Meta:
         model = Reports
         fields = ('description', 'created_at', 'rates', 'user_id')
+
+
+class NearestSortPointsSerialzier(ModelSerializer):
+
+    class Meta:
+        model = SortPoints
+        fields = ('pk', 'name', 'schedule',)
