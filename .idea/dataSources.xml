@@ -17,5 +17,12 @@
       <jdbc-url>jdbc:postgresql://37.228.117.174:5432/happy</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="ecolog_db@81.163.30.36" uuid="8a01ee61-ff45-49b7-b7a5-f1f1a9318aa0">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://81.163.30.36:5432/ecolog_db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

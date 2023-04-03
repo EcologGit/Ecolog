@@ -62,22 +62,6 @@ class CategoryWasteTypes(admin.ModelAdmin):
 class CategoryAdmarea(admin.ModelAdmin):
     list_display = ('admarea_id', 'name')
 
-
-@admin.register(EventsOnNatureObjects)
-class CategoryEventsOnObjects(admin.ModelAdmin):
-    list_display = ('eo_id',)
-
-
-@admin.register(EventsOnRoutes)
-class CategoryEventsOnRoutes(admin.ModelAdmin):
-    list_display = ('event_id',)
-
-
-@admin.register(PointTypes)
-class CategoryPointTypes(admin.ModelAdmin):
-    list_display = ('waste_id',)
-
-
 @admin.register(StatusesDict)
 class CategoryStatuses(admin.ModelAdmin):
     list_display = ('status_id', 'name')
