@@ -1,8 +1,7 @@
 from review.services.db_query import get_nature_objects_with_avg_rates, get_events_with_avg_rates
 from review.services.db_query import get_routes_with_avg_rates, get_list_sort_points_with_waste_types
-from review.services.db_query import get_reports_statistic, get_nearest_sort_points
+from review.services.db_query import get_nearest_sort_points
 from review.services.db_query import get_reports_for_object, get_actual_events_for_object
-from review.services.db_query import get_one_object_with_rates_by_id_or_not_found_error
 from review.services.format import get_model_or_not_found_error, ObjectInfoAndReportStatisitcView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,9 +11,6 @@ from review.serializers import ReadonlyEventsWithAvgRatesSerializer, ReadOnlyLis
 from review.serializers import ReadonlyNatureObjectsWithAvgRatesSerializer, ReadOnlyRoutesWithAvgRatesSerializer
 from review.serializers import OneNatureObjectSerializer, EventListInfotSerializer, ReportsForObjectSeriralizer
 from review.serializers import NearestSortPointsSerialzier, OneRouteSerializer
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.exceptions import NotFound, APIException
-from review.config import OBJECT_TYPE_MAP
 # Create your views here.
 
 class GetPlacesView(ListAPIView):

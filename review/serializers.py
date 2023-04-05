@@ -132,9 +132,13 @@ class NearestSortPointsSerialzier(ModelSerializer):
 
 
 class OneRouteSerializer(ModelSerializer):
+    avg_availability = serializers.FloatField()
+    avg_beauty = serializers.FloatField()
+    avg_purity = serializers.FloatField()
 
     class Meta:
         model = Routes
         fields = ('pk', 'name', 'duration', 'length', 'description', 
-                  'start_n', 'start_e', 'end_n', 'end_e',
+                  'start_n', 'start_e', 'end_n', 'end_e', 'avg_availability', 
+                  'avg_beauty', 'avg_purity',
                    )
