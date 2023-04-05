@@ -1,5 +1,5 @@
 from review.services.db_query import get_nature_objects_with_avg_rates, get_events_with_avg_rates
-from review.services.db_query import get_routes_with_avg_rates, get_list_sort_points_with_waste_types, get_object_by_id
+from review.services.db_query import get_routes_with_avg_rates, get_list_sort_points_with_waste_types, get_one_object_with_rates_by_id
 from review.services.db_query import get_reports_information, get_events_actual, get_nearest_sort_points
 from review.services.db_query import get_reports_for_object, get_actual_events_for_object
 from rest_framework.views import APIView
@@ -27,22 +27,19 @@ class GetOnePlaceView(APIView):
 
     def get(self, request, *args, **kwargs):
         try:
-            nature_object = get_object_by_id(NatureObjects, kwargs.get('id'))
+            nature_object = get_one_object_with_rates_by_id(NatureObjects, kwargs.get('id'))
         except ObjectDoesNotExist:
             raise NotFound
         
         try:
-            actual_events = EventListInfotSerializer(get_events_actual() \
-                                                    .filter(nature_objects__pk = kwargs.get('id')), many=True)
-        
+            report_information = get_reports_information(nature_object)
             nature_object_serializer = OneNatureObjectSerializer(instance=nature_object)
 
         except Exception:
             raise APIException
 
         return Response({'object_info': nature_object_serializer.data,
-                          'events': actual_events.data,
-                          })
+                         'reports_info': report_information})
 
 
 class GetRoutesView(ListAPIView):
@@ -129,3 +126,28 @@ class GetNearestSortPoint(ListAPIView):
             raise NotFound
         
         return queryset
+
+
+class GetInformationAbout(APIView):
+    
+    def get(self, request, *args, **kwargs):
+
+        try:
+            nature_object = get_one_object_with_rates_by_id(Routes, kwargs.get('id'))
+        except ObjectDoesNotExist:
+            raise NotFound
+        
+        try:
+            actual_events = EventListInfotSerializer(get_events_actual() \
+                                                    .filter(nature_objects__pk = kwargs.get('id')), many=True)
+        
+            nature_object_serializer = OneNatureObjectSerializer(instance=nature_object)
+
+        except Exception:
+            raise APIException
+
+        return Response({'object_info': nature_object_serializer.data,
+                          'events': actual_events.data,
+                          })
+
+        

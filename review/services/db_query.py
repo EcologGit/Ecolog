@@ -69,7 +69,7 @@ def get_list_sort_points_with_waste_types() -> QuerySet:
     return query
 
 
-def get_object_by_id(model: Model, id: int) -> Model:
+def get_one_object_with_rates_by_id(model: Model, id: int) -> Model:
 
     query = NatureObjects.objects \
                             .annotate(
