@@ -145,4 +145,5 @@ class OneEventSerializer(ModelSerializer):
 
     class Meta:
         model = Events
-        fields = ('pk', 'name', 'time_start', 'status', 'photo',)
+        fields = ('pk', 'name', 'time_start', 'status', 'photo', 
+                  'latitude_n', 'longitude_e', 'description',)

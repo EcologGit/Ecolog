@@ -8,7 +8,6 @@ from rest_framework.exceptions import NotFound
 from review.config import KM_DISTANCE_NEAR_POINT
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import APIException
-from django.core.exceptions import ObjectDoesNotExist
 '''
     ПРИМЕЧАНИЕ:
     Если нет ни одного объекта в бд, то выведет строку с None - значениями
@@ -123,13 +122,10 @@ def get_reports_for_object(object_type: Model, id: int) -> QuerySet:
 
 
 def get_actual_events_for_object(object_type: Model, id: int) -> QuerySet:
-    try:
-        if object_type is NatureObjects:
-            return get_events_actual().filter(nature_objects__pk=id)
-        elif object_type is Routes:
-            return get_events_actual().filter(route_objects__pk=id)
-    except Exception:
-        raise APIException
+    if object_type is NatureObjects:
+        return get_events_actual().filter(nature_objects__pk=id)
+    elif object_type is Routes:
+        return get_events_actual().filter(route_objects__pk=id)
 
 
 def get_one_event_info(id: int):

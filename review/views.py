@@ -42,7 +42,6 @@ class GetEventsView(ListAPIView):
     queryset = get_events_list()
 
 
-
 class GetOneEventView(APIView):
 
     def get(self, request, *args, **kwargs):
