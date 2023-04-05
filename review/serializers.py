@@ -33,17 +33,13 @@ class NatureObjectsNameAndIdSerializer(ModelSerializer):
 class ReadonlyEventsWithAvgRatesSerializer(ModelSerializer):
     routes = RoutesWithNameAndPkSerializer(many=True)
     nature_objects = NatureObjectsNameAndIdSerializer(many=True)
-    avg_availability = serializers.FloatField()
-    avg_beauty = serializers.FloatField()
-    avg_purity = serializers.FloatField()
     datetime_start = serializers.DateTimeField()
     status = serializers.CharField(max_length=64)
 
     class Meta:
         model = Events
         fields = ['name', 'photo', 'description', 'event_id',
-                  'nature_objects', 'routes', 'avg_availability', 
-                  'avg_beauty', 'avg_purity', 'datetime_start',
+                  'nature_objects', 'routes', 'datetime_start',
                   'status'
                   ]
 

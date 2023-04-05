@@ -51,11 +51,6 @@ def get_events_with_avg_rates() -> QuerySet:
                 .prefetch_related('routes') \
                 .prefetch_related('nature_objects') \
                 .annotate(
-                    avg_availability=Avg('reports__rates__availability'),
-                    avg_beauty=Avg('reports__rates__beauty'),
-                    avg_purity=Avg('reports__rates__purity'),
-                    ) \
-                .annotate(
                     datetime_start=F('time_start'),
                     status=F('status_id__name'),
                     )

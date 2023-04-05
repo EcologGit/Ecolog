@@ -43,11 +43,10 @@ class GetEventsView(ListAPIView):
 
 
 
-class GetOneEventView(RetrieveAPIView):
-    queryset = Events.objects.all()
-    lookup_field = 'eventid'
-    lookup_url_kwarg = 'id'
-    serializer_class = ReadonlyEventsWithAvgRatesSerializer
+class GetOneEventView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        pass
 
 
 class GetGarbagePointsView(ListAPIView):
