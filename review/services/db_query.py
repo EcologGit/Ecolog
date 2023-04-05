@@ -7,6 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework.exceptions import NotFound
 from review.config import OBJECT_TYPE_MAP, KM_DISTANCE_NEAR_POINT
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import APIException
 '''
     ПРИМЕЧАНИЕ:
     Если нет ни одного объекта в бд, то выведет строку с None - значениями
@@ -129,11 +130,13 @@ def get_reports_for_object(object_type: Model, id: int) -> QuerySet:
 
 
 def get_actual_events_for_object(object_type: Model, id: int) -> QuerySet:
-    if object_type is NatureObjects:
-        return get_events_actual().filter(nature_objects__pk=id)
-    elif object_type is Routes:
-        return get_events_actual().filter(route_objects__pk=id)
-
+    try:
+        if object_type is NatureObjects:
+            return get_events_actual().filter(nature_objects__pk=id)
+        elif object_type is Routes:
+            return get_events_actual().filter(route_objects__pk=id)
+    except Exception:
+        raise APIException
 
 '''def test_query():
     query = NatureObjects.objects \
