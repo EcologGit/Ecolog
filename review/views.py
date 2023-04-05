@@ -2,6 +2,7 @@ from review.services.db_query import get_nature_objects_with_avg_rates, get_even
 from review.services.db_query import get_routes_with_avg_rates, get_list_sort_points_with_waste_types, get_one_object_with_rates_by_id
 from review.services.db_query import get_reports_information, get_events_actual, get_nearest_sort_points
 from review.services.db_query import get_reports_for_object, get_actual_events_for_object
+from review.services.format import object_type_handler
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView
@@ -128,7 +129,7 @@ class GetNearestSortPoint(ListAPIView):
         return queryset
 
 
-class GetInformationAbout(APIView):
+class GetInformationOneRoute(APIView):
     
     def get(self, request, *args, **kwargs):
 
