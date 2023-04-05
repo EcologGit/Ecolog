@@ -1,11 +1,11 @@
-from eco.models import Rates, Events, NatureObjects, Routes, SortPoints, Reports
-from django.db.models import Avg, F, Sum, Q, ExpressionWrapper, FloatField
+from eco.models import Events, NatureObjects, Routes, SortPoints, Reports
+from django.db.models import Avg, F, Sum, Q
 from django.db.models import QuerySet, Model
 from datetime import datetime
 from geopy.distance import geodesic
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.exceptions import NotFound
-from review.config import OBJECT_TYPE_MAP, KM_DISTANCE_NEAR_POINT
+from review.config import KM_DISTANCE_NEAR_POINT
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import APIException
 from django.core.exceptions import ObjectDoesNotExist
@@ -67,17 +67,13 @@ def get_list_sort_points_with_waste_types() -> QuerySet:
 
 
 def get_one_object_with_rates_by_id_or_not_found_error(model: Model, id: int) -> Model:
-    try:
-        query = model.objects \
-                            .annotate(
+    query = model.objects \
+                    .annotate(
                                 avg_availability=Avg('reports__rates__availability'),
                                 avg_beauty=Avg('reports__rates__beauty'),
                                 avg_purity=Avg('reports__rates__purity'),
-                                ) \
-                            .get(pk=id)
-    except ObjectDoesNotExist:
-        raise NotFound
-    return query
+                                )
+    return get_object_or_404(query, pk=id)
 
 
 def get_events_actual() -> QuerySet:
