@@ -8,6 +8,7 @@ from rest_framework.exceptions import NotFound
 from review.config import OBJECT_TYPE_MAP, KM_DISTANCE_NEAR_POINT
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import APIException
+from django.core.exceptions import ObjectDoesNotExist
 '''
     ПРИМЕЧАНИЕ:
     Если нет ни одного объекта в бд, то выведет строку с None - значениями
@@ -70,16 +71,17 @@ def get_list_sort_points_with_waste_types() -> QuerySet:
     return query
 
 
-def get_one_object_with_rates_by_id(model: Model, id: int) -> Model:
-
-    query = NatureObjects.objects \
+def get_one_object_with_rates_by_id_or_not_found_error(model: Model, id: int) -> Model:
+    try:
+        query = NatureObjects.objects \
                             .annotate(
                                 avg_availability=Avg('reports__rates__availability'),
                                 avg_beauty=Avg('reports__rates__beauty'),
                                 avg_purity=Avg('reports__rates__purity'),
                                 ) \
                             .get(pk=id)
-    
+    except ObjectDoesNotExist:
+        raise NotFound
     return query
 
 
@@ -87,7 +89,7 @@ def get_events_actual() -> QuerySet:
     return Events.objects.filter(time_of_close__gt = datetime.now())
 
 
-def get_reports_information(object_with_reports: Model) -> dict:
+def get_reports_statistic(object_with_reports: Model) -> dict:
 
     reports_info = object_with_reports.reports.all() \
                         .values('results__waste_id__unit_of_waste') \
