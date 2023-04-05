@@ -73,7 +73,7 @@ def get_list_sort_points_with_waste_types() -> QuerySet:
 
 def get_one_object_with_rates_by_id_or_not_found_error(model: Model, id: int) -> Model:
     try:
-        query = NatureObjects.objects \
+        query = model.objects \
                             .annotate(
                                 avg_availability=Avg('reports__rates__availability'),
                                 avg_beauty=Avg('reports__rates__beauty'),

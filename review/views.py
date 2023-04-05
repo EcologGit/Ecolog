@@ -11,7 +11,7 @@ from eco.models import NatureObjects, Routes, Events, SortPoints, Favourites
 from review.serializers import ReadonlyEventsWithAvgRatesSerializer, ReadOnlyListSortPointsSerializer
 from review.serializers import ReadonlyNatureObjectsWithAvgRatesSerializer, ReadOnlyRoutesWithAvgRatesSerializer
 from review.serializers import OneNatureObjectSerializer, EventListInfotSerializer, ReportsForObjectSeriralizer
-from review.serializers import NearestSortPointsSerialzier
+from review.serializers import NearestSortPointsSerialzier, OneRouteSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import NotFound, APIException
 from review.config import OBJECT_TYPE_MAP
@@ -24,7 +24,7 @@ class GetPlacesView(ListAPIView):
         return get_nature_objects_with_avg_rates()
 
   
-class GetOnePlaceView(ObjectInfoAndReportStatisitcView):
+class GetInformationOnePlaceView(ObjectInfoAndReportStatisitcView):
     serializer_class = OneNatureObjectSerializer
     model = NatureObjects
 
@@ -36,11 +36,9 @@ class GetRoutesView(ListAPIView):
         return get_routes_with_avg_rates()
 
 
-class GetOneRouteView(RetrieveAPIView):
-    queryset = Routes.objects.all()
-    lookup_field = 'route_id'
-    lookup_url_kwarg = 'id'
-    serializer_class = ReadOnlyRoutesWithAvgRatesSerializer
+class GetInformationOneRouteView(ObjectInfoAndReportStatisitcView):
+    model = Routes
+    serializer_class = OneRouteSerializer
 
 
 class GetEventsView(ListAPIView):
@@ -100,22 +98,3 @@ class GetNearestSortPoint(ListAPIView):
                                                       'name', 'pk', 'schedule', 'photo')
         
         return queryset
-
-
-class GetInformationOneRoute(APIView):
-    
-    def get(self, request, *args, **kwargs):
-
-        try:
-            nature_object = get_one_object_with_rates_by_id_or_not_found_error(Routes, kwargs.get('id'))
-            report_information = get_reports_statistic(nature_object)
-            nature_object_serializer = OneNatureObjectSerializer(instance=nature_object)
-
-        except Exception:
-            raise APIException
-
-        return Response({'object_info': nature_object_serializer.data,
-                        'report_information': report_information
-                          })
-
-        

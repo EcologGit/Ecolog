@@ -129,3 +129,12 @@ class NearestSortPointsSerialzier(ModelSerializer):
     class Meta:
         model = SortPoints
         fields = ('pk', 'name', 'schedule', 'photo')
+
+
+class OneRouteSerializer(ModelSerializer):
+
+    class Meta:
+        model = Routes
+        fields = ('pk', 'name', 'duration', 'length', 'description', 
+                  'start_n', 'start_e', 'end_n', 'end_e',
+                   )
