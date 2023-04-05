@@ -1,16 +1,16 @@
-from review.services.db_query import get_nature_objects_with_avg_rates, get_events_with_avg_rates
+from review.services.db_query import get_nature_objects_with_avg_rates, get_events_list
 from review.services.db_query import get_routes_with_avg_rates, get_list_sort_points_with_waste_types
-from review.services.db_query import get_nearest_sort_points
+from review.services.db_query import get_nearest_sort_points, get_one_event_info
 from review.services.db_query import get_reports_for_object, get_actual_events_for_object
 from review.services.format import get_model_or_not_found_error, ObjectInfoAndReportStatisitcView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from eco.models import NatureObjects, Routes, Events, SortPoints, Favourites
-from review.serializers import ReadonlyEventsWithAvgRatesSerializer, ReadOnlyListSortPointsSerializer
+from review.serializers import ReadonlyEventsListSerializer, ReadOnlyListSortPointsSerializer
 from review.serializers import ReadonlyNatureObjectsWithAvgRatesSerializer, ReadOnlyRoutesWithAvgRatesSerializer
 from review.serializers import OneNatureObjectSerializer, EventListInfotSerializer, ReportsForObjectSeriralizer
-from review.serializers import NearestSortPointsSerialzier, OneRouteSerializer
+from review.serializers import NearestSortPointsSerialzier, OneRouteSerializer, OneEventSerializer
 # Create your views here.
 
 class GetPlacesView(ListAPIView):
@@ -38,15 +38,17 @@ class GetInformationOneRouteView(ObjectInfoAndReportStatisitcView):
 
 
 class GetEventsView(ListAPIView):
-    serializer_class = ReadonlyEventsWithAvgRatesSerializer
-    queryset = get_events_with_avg_rates()
+    serializer_class = ReadonlyEventsListSerializer
+    queryset = get_events_list()
 
 
 
 class GetOneEventView(APIView):
 
     def get(self, request, *args, **kwargs):
-        pass
+        obj = get_one_event_info(kwargs['id'])
+        serializer = OneEventSerializer(instance=obj)
+        return Response(serializer.data)
 
 
 class GetGarbagePointsView(ListAPIView):

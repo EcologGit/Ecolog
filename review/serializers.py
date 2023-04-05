@@ -30,7 +30,7 @@ class NatureObjectsNameAndIdSerializer(ModelSerializer):
         fields = ['name', 'pk']
 
 
-class ReadonlyEventsWithAvgRatesSerializer(ModelSerializer):
+class ReadonlyEventsListSerializer(ModelSerializer):
     routes = RoutesWithNameAndPkSerializer(many=True)
     nature_objects = NatureObjectsNameAndIdSerializer(many=True)
     datetime_start = serializers.DateTimeField()
@@ -40,7 +40,7 @@ class ReadonlyEventsWithAvgRatesSerializer(ModelSerializer):
         model = Events
         fields = ['name', 'photo', 'description', 'event_id',
                   'nature_objects', 'routes', 'datetime_start',
-                  'status'
+                  'status',
                   ]
 
 
@@ -138,3 +138,11 @@ class OneRouteSerializer(ModelSerializer):
                   'start_n', 'start_e', 'end_n', 'end_e', 'avg_availability', 
                   'avg_beauty', 'avg_purity',
                    )
+
+
+class OneEventSerializer(ModelSerializer):
+    status = serializers.CharField(max_length=64)
+
+    class Meta:
+        model = Events
+        fields = ('pk', 'name', 'time_start', 'status', 'photo',)

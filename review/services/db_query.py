@@ -44,7 +44,7 @@ def get_routes_with_avg_rates() -> QuerySet:
     return query
 
 
-def get_events_with_avg_rates() -> QuerySet:
+def get_events_list() -> QuerySet:
 
     query = Events.objects \
                 .select_related('status_id') \
@@ -134,6 +134,12 @@ def get_actual_events_for_object(object_type: Model, id: int) -> QuerySet:
             return get_events_actual().filter(route_objects__pk=id)
     except Exception:
         raise APIException
+
+
+def get_one_event_info(id: int):
+    query = Events.objects.annotate(status=F('status_id__name'))
+    
+    return get_object_or_404(query, pk=id)
 
 '''def test_query():
     query = NatureObjects.objects \
