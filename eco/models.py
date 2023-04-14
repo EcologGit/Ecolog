@@ -60,7 +60,7 @@ class StatusesDict(models.Model):
 class Districts(models.Model):
     district_id = models.AutoField(primary_key=True)
     admarea_id = models.ForeignKey(Admarea, models.SET_NULL, null=True, blank=True, related_name='districts')  
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
@@ -98,7 +98,7 @@ class WasteTypes(models.Model):
 
 class Reports(models.Model):
     report_id = models.AutoField(primary_key=True)  
-    description = models.CharField(max_length=100)
+    description = models.CharField(max_length=1000)
     photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
     created_at = models.DateTimeField(auto_now_add=True)
     status_id_r = models.ForeignKey(StatusesRDict, models.DO_NOTHING, related_name='reports')  
@@ -116,13 +116,13 @@ class Reports(models.Model):
 class SortPoints(models.Model):
     point_id = models.AutoField(primary_key=True)
     photo = models.ImageField(blank=True, null=True)
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=100)
     admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True, related_name='sort_points')
     district_id = models.OneToOneField(Districts, models.SET_NULL, blank=True, null=True)
-    transport_description = models.CharField(max_length=100)
+    transport_description = models.CharField(max_length=300)
     adress = models.CharField(max_length=256)
     locality = models.CharField(max_length=256)
-    description = models.CharField(max_length=100)
+    description = models.CharField(max_length=1000)
     latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
     longitude_e = models.DecimalField(max_digits=8, decimal_places=5, max_length=9)  
     organization_inn = models.OneToOneField(Organizations, models.CASCADE)
@@ -144,8 +144,8 @@ class Routes(models.Model):
     )
 
     route_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=64)
-    description = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=1000)
     start_n = models.DecimalField(max_digits=8, decimal_places=6)  
     start_e = models.DecimalField(max_digits=7, decimal_places=5)  
     end_n = models.DecimalField(max_digits=8, decimal_places=6)  
@@ -166,8 +166,8 @@ class Routes(models.Model):
 
 class NatureObjects(models.Model):
     object_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=64)
-    description = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=1000)
     category_obj_id = models.ForeignKey(CategoryObjDict, models.SET_NULL, related_name='nature_objects', null=True)
     latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
     longitude_e = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)
@@ -189,12 +189,10 @@ class NatureObjects(models.Model):
 
 class Events(models.Model):
     event_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=64)
-    description = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=1000)
     status_id = models.ForeignKey(StatusesDict, models.SET_NULL, null=True, related_name='events')  
     adress = models.CharField(max_length=256)
-    latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
-    longitude_e = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
     photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
     time_start = models.DateTimeField()
     time_of_close = models.DateTimeField()
