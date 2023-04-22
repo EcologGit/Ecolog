@@ -98,7 +98,7 @@ class WasteTypes(models.Model):
 
 class Reports(models.Model):
     report_id = models.AutoField(primary_key=True)  
-    description = models.CharField(max_length=1000)
+    description = models.TextField(max_length=1000)
     photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
     created_at = models.DateTimeField(auto_now_add=True)
     status_id_r = models.ForeignKey(StatusesRDict, models.DO_NOTHING, related_name='reports')  
@@ -119,10 +119,10 @@ class SortPoints(models.Model):
     name = models.CharField(max_length=100)
     admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True, related_name='sort_points')
     district_id = models.OneToOneField(Districts, models.SET_NULL, blank=True, null=True)
-    transport_description = models.CharField(max_length=300)
+    transport_description = models.TextField(max_length=300)
     adress = models.CharField(max_length=256)
     locality = models.CharField(max_length=256)
-    description = models.CharField(max_length=1000)
+    description = models.TextField(max_length=1000)
     latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
     longitude_e = models.DecimalField(max_digits=8, decimal_places=5, max_length=9)  
     organization_inn = models.OneToOneField(Organizations, models.CASCADE)
@@ -145,7 +145,7 @@ class Routes(models.Model):
 
     route_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=1000)
+    description = models.TextField(max_length=1000)
     start_n = models.DecimalField(max_digits=8, decimal_places=6)  
     start_e = models.DecimalField(max_digits=7, decimal_places=5)  
     end_n = models.DecimalField(max_digits=8, decimal_places=6)  
@@ -153,7 +153,7 @@ class Routes(models.Model):
     diffictulity_level = models.CharField(max_length=1, default='A', choices=DIFFICULT)  
     length = models.FloatField()
     duration = models.TextField()  # This field type is a guess.
-    transport_description = models.CharField(max_length=100)
+    transport_description = models.TextField(max_length=100)
     locality = models.CharField(max_length=256)
     price = models.IntegerField()
     photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
@@ -167,14 +167,14 @@ class Routes(models.Model):
 class NatureObjects(models.Model):
     object_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=1000)
+    description = models.TextField(max_length=1000)
     category_obj_id = models.ForeignKey(CategoryObjDict, models.SET_NULL, related_name='nature_objects', null=True)
     latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
     longitude_e = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)
     admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True, related_name='nature_objects')
     district_id = models.OneToOneField(Districts, models.SET_NULL, blank=True, null=True)
     locality = models.CharField(max_length=256)
-    transport_description = models.CharField(max_length=100)
+    transport_description = models.TextField(max_length=100)
     adress = models.CharField(max_length=256)
     organization_inn = models.OneToOneField(Organizations, models.SET_NULL, blank=True, null=True)
     has_parking = models.BooleanField(blank=True, null=True)
@@ -190,7 +190,7 @@ class NatureObjects(models.Model):
 class Events(models.Model):
     event_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=1000)
+    description = models.TextField(max_length=1000)
     status_id = models.ForeignKey(StatusesDict, models.SET_NULL, null=True, related_name='events')  
     adress = models.CharField(max_length=256)
     photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
