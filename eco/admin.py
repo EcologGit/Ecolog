@@ -11,6 +11,7 @@ class CategoryDistricts(admin.ModelAdmin):
 @admin.register(Events)
 class CategoryEvents(admin.ModelAdmin):
     list_display = ('name', 'event_id')
+    filter_horizontal = ('nature_objects', 'routes')
 
 
 @admin.register(Favourites)
@@ -21,6 +22,7 @@ class CategoryFavourites(admin.ModelAdmin):
 @admin.register(SortPoints)
 class CategoryGarbagePoints(admin.ModelAdmin):
     list_display = ('point_id', 'name')
+    filter_horizontal = ('wast_types',)
 
 
 @admin.register(NatureObjects)
