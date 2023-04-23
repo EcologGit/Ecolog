@@ -24,7 +24,7 @@ def get_nature_objects_with_avg_rates() -> QuerySet:
                     avg_availability=Avg('reports__rates__availability'),
                     avg_beauty=Avg('reports__rates__beauty'),
                     avg_purity=Avg('reports__rates__purity'),
-                    ) 
+                    )
     return query
 
 
@@ -88,13 +88,16 @@ def get_reports_statistic(object_with_reports: Model) -> dict:
                             ) \
                         .annotate(
                             type = F('results__waste_id__name'),
-                            unit = F('results__waste_id__unit_of_waste')
+                            unit = F('results__waste_id__unit_of_waste'),
                         )
     return reports_info
 
 
 def get_nearest_sort_points(object_type: Model, id: int, *args) -> dict:
-    def get_distance(coor_objects, x) -> float:
+    def get_distance(coor_objects: tuple, x) -> float:
+        for el in coor_objects:
+            if el is None:
+                return float('inf')
         return geodesic(coor_objects, (x.get('latitude_n'), x.get('longitude_e'))).km
     
     query = SortPoints.objects.values('latitude_n', 'longitude_e', *args)
@@ -109,7 +112,7 @@ def get_nearest_sort_points(object_type: Model, id: int, *args) -> dict:
             coor_objects_begin = (object.start_n, object.start_e)
             coor_objects_end = (object.end_n, object.end_e)
             sort_points = filter(lambda x: get_distance(coor_objects_begin, x) < KM_DISTANCE_NEAR_POINT 
-                                 or get_distance(coor_objects_end, x), query)
+                                 or get_distance(coor_objects_end, x) < KM_DISTANCE_NEAR_POINT, query)
     except Exception:
         raise NotFound
 

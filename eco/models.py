@@ -10,6 +10,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.core.validators import MaxValueValidator, MinValueValidator
+from smart_selects.db_fields import ChainedForeignKey
 
 
 
@@ -49,7 +50,7 @@ class Organizations(models.Model):
     phone_number = models.CharField(max_length=12) #Исправить
 
 
-class StatusesDict(models.Model):
+class StatusesEvent(models.Model):
     status_id = models.AutoField(primary_key=True)  
     name = models.CharField(max_length=64)
 
@@ -79,7 +80,7 @@ class Favourites(models.Model):
         ]
 
 
-class StatusesRDict(models.Model):
+class StatusesReport(models.Model):
     status_id_r = models.AutoField(primary_key=True)  
     name = models.CharField(max_length=64)
 
@@ -98,10 +99,10 @@ class WasteTypes(models.Model):
 
 class Reports(models.Model):
     report_id = models.AutoField(primary_key=True)  
-    description = models.TextField(max_length=1000)
+    description = models.TextField(max_length=1024)
     photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
     created_at = models.DateTimeField(auto_now_add=True)
-    status_id_r = models.ForeignKey(StatusesRDict, models.DO_NOTHING, related_name='reports')  
+    status_id_r = models.ForeignKey(StatusesReport, models.DO_NOTHING, related_name='reports')  
     user_id = models.ForeignKey(CustomUser, models.CASCADE, related_name='reports')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -118,14 +119,24 @@ class SortPoints(models.Model):
     photo = models.ImageField(blank=True, null=True)
     name = models.CharField(max_length=100)
     admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True, related_name='sort_points')
-    district_id = models.OneToOneField(Districts, models.SET_NULL, blank=True, null=True)
-    transport_description = models.TextField(max_length=300)
+    district_id = ChainedForeignKey(
+        Districts,
+        chained_field="admarea_id",
+        chained_model_field="admarea_id",
+        show_all=False,
+        auto_choose=True,
+        sort=True,
+        blank=True, 
+        null=True,
+        on_delete=models.SET_NULL)
+    #models.ForeignKey(Districts, models.SET_NULL, blank=True, null=True)
+    transport_description = models.TextField(max_length=512)
     adress = models.CharField(max_length=256)
     locality = models.CharField(max_length=256)
-    description = models.TextField(max_length=1000)
-    latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
-    longitude_e = models.DecimalField(max_digits=8, decimal_places=5, max_length=9)  
-    organization_inn = models.OneToOneField(Organizations, models.CASCADE)
+    description = models.TextField(max_length=1024)
+    latitude_n = models.DecimalField(max_digits=10, decimal_places=8, max_length=9)  
+    longitude_e = models.DecimalField(max_digits=11, decimal_places=8, max_length=9)  
+    organization_inn = models.ForeignKey(Organizations, models.CASCADE)
     schedule = models.CharField(max_length=100, blank=True, null=True)
     reports = GenericRelation(Reports)
     favourites = GenericRelation(Favourites)
@@ -145,15 +156,15 @@ class Routes(models.Model):
 
     route_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    description = models.TextField(max_length=1000)
-    start_n = models.DecimalField(max_digits=8, decimal_places=6)  
-    start_e = models.DecimalField(max_digits=7, decimal_places=5)  
-    end_n = models.DecimalField(max_digits=8, decimal_places=6)  
-    end_e = models.DecimalField(max_digits=7, decimal_places=5)  
+    description = models.TextField(max_length=1024)
+    start_n = models.DecimalField(max_digits=10, decimal_places=8)
+    start_e = models.DecimalField(max_digits=11, decimal_places=8)  
+    end_n = models.DecimalField(max_digits=10, decimal_places=8, null=True, blank=True)  
+    end_e = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)  
     diffictulity_level = models.CharField(max_length=1, default='A', choices=DIFFICULT)  
     length = models.FloatField()
     duration = models.TextField()  # This field type is a guess.
-    transport_description = models.TextField(max_length=100)
+    transport_description = models.TextField(max_length=512)
     locality = models.CharField(max_length=256)
     price = models.IntegerField()
     photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
@@ -167,16 +178,25 @@ class Routes(models.Model):
 class NatureObjects(models.Model):
     object_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    description = models.TextField(max_length=1000)
+    description = models.TextField(max_length=1024)
     category_obj_id = models.ForeignKey(CategoryObjDict, models.SET_NULL, related_name='nature_objects', null=True)
-    latitude_n = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)  
-    longitude_e = models.DecimalField(max_digits=8, decimal_places=6, max_length=9)
+    latitude_n = models.DecimalField(max_digits=10, decimal_places=8, max_length=9)  
+    longitude_e = models.DecimalField(max_digits=11, decimal_places=8, max_length=9)
     admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True, related_name='nature_objects')
-    district_id = models.OneToOneField(Districts, models.SET_NULL, blank=True, null=True)
+    district_id = ChainedForeignKey(
+        Districts,
+        chained_field="admarea_id",
+        chained_model_field="admarea_id",
+        show_all=False,
+        auto_choose=True,
+        sort=True,
+        blank=True, 
+        null=True,
+        on_delete=models.SET_NULL)
     locality = models.CharField(max_length=256)
-    transport_description = models.TextField(max_length=100)
+    transport_description = models.TextField(max_length=512)
     adress = models.CharField(max_length=256)
-    organization_inn = models.OneToOneField(Organizations, models.SET_NULL, blank=True, null=True)
+    organization_inn = models.ForeignKey(Organizations, models.SET_NULL, blank=True, null=True)
     has_parking = models.BooleanField(blank=True, null=True)
     photo = models.ImageField(blank=True, null=True)
     schedule = models.CharField(max_length=100, blank=True, null=True)
@@ -190,8 +210,8 @@ class NatureObjects(models.Model):
 class Events(models.Model):
     event_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    description = models.TextField(max_length=1000)
-    status_id = models.ForeignKey(StatusesDict, models.SET_NULL, null=True, related_name='events')  
+    description = models.TextField(max_length=1024)
+    status_id = models.ForeignKey(StatusesEvent, models.SET_NULL, null=True, related_name='events')  
     adress = models.CharField(max_length=256)
     photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
     time_start = models.DateTimeField()
