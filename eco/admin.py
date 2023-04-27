@@ -64,12 +64,12 @@ class CategoryWasteTypes(admin.ModelAdmin):
 class CategoryAdmarea(admin.ModelAdmin):
     list_display = ('admarea_id', 'name')
 
-@admin.register(StatusesDict)
+@admin.register(StatusesEvent)
 class CategoryStatuses(admin.ModelAdmin):
     list_display = ('status_id', 'name')
 
 
-@admin.register(StatusesRDict)
+@admin.register(StatusesReport)
 class CategoryStatusesR(admin.ModelAdmin):
     list_display = ('status_id_r', 'name')
 
