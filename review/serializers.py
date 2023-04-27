@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 from eco.models import NatureObjects, Reports
-from eco.models import Routes, StatusesDict, Events, Districts, SortPoints, WasteTypes, Rates
+from eco.models import Routes, StatusesEvent, Events, Districts, SortPoints, WasteTypes, Rates
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
