@@ -23,7 +23,7 @@ class CustomUser(AbstractUser):
     sex = models.CharField(choices=SEX, max_length=1)
     birth_date = models.DateField(null=True)
     locality = models.CharField(max_length=100, null=True)
-    photo = models.ImageField(null=True)
+    photo = models.ImageField(null=True, upload_to='user/')
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -100,7 +100,7 @@ class WasteTypes(models.Model):
 class Reports(models.Model):
     report_id = models.AutoField(primary_key=True)  
     description = models.TextField(max_length=1024)
-    photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
+    photo = models.ImageField(blank=True, null=True, upload_to='reports/')  # This field type is a guess.
     created_at = models.DateTimeField(auto_now_add=True)
     status_id_r = models.ForeignKey(StatusesReport, models.DO_NOTHING, related_name='reports')  
     user_id = models.ForeignKey(CustomUser, models.CASCADE, related_name='reports')
@@ -116,7 +116,7 @@ class Reports(models.Model):
 
 class SortPoints(models.Model):
     point_id = models.AutoField(primary_key=True)
-    photo = models.ImageField(blank=True, null=True)
+    photo = models.ImageField(blank=True, null=True, upload_to='sort_points/')
     name = models.CharField(max_length=100)
     admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True, related_name='sort_points')
     district_id = ChainedForeignKey(
@@ -167,7 +167,7 @@ class Routes(models.Model):
     transport_description = models.TextField(max_length=512)
     locality = models.CharField(max_length=256)
     price = models.IntegerField()
-    photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
+    photo = models.ImageField(blank=True, null=True, upload_to='routes/')  # This field type is a guess.
     reports = GenericRelation(Reports, related_query_name='routes')
     favourites = GenericRelation(Favourites)
 
@@ -198,7 +198,7 @@ class NatureObjects(models.Model):
     adress = models.CharField(max_length=256)
     organization_inn = models.ForeignKey(Organizations, models.SET_NULL, blank=True, null=True)
     has_parking = models.BooleanField(blank=True, null=True)
-    photo = models.ImageField(blank=True, null=True)
+    photo = models.ImageField(blank=True, null=True, upload_to='nature_objects/')
     schedule = models.CharField(max_length=100, blank=True, null=True)
     reports = GenericRelation(Reports, related_query_name='nature_object')
     favourites = GenericRelation(Favourites)
@@ -213,7 +213,7 @@ class Events(models.Model):
     description = models.TextField(max_length=1024)
     status_id = models.ForeignKey(StatusesEvent, models.SET_NULL, null=True, related_name='events')  
     adress = models.CharField(max_length=256)
-    photo = models.ImageField(blank=True, null=True)  # This field type is a guess.
+    photo = models.ImageField(blank=True, null=True, upload_to='events/')  # This field type is a guess.
     time_start = models.DateTimeField()
     time_of_close = models.DateTimeField()
     reports = GenericRelation(Reports, related_query_name='events')
