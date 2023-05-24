@@ -16,7 +16,7 @@ from rest_framework.exceptions import APIException
 def get_nature_objects_with_avg_rates() -> QuerySet:
 
     query = NatureObjects.objects \
-                .values(
+                .only(
                     'object_id', 'locality', 'name',
                     'description', 'photo',
                     ) \
@@ -31,7 +31,7 @@ def get_nature_objects_with_avg_rates() -> QuerySet:
 def get_routes_with_avg_rates() -> QuerySet:
 
     query = Routes.objects \
-                .values(
+                .only(
                     'route_id', 'name', 'locality', 'length',
                     'duration', 'photo',
                     ) \
