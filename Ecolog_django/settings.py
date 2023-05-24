@@ -26,7 +26,7 @@ SECRET_KEY = no_secrets.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['81.163.30.36']
 
 # Application definition
 
