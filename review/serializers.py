@@ -31,15 +31,12 @@ class NatureObjectsNameAndIdSerializer(ModelSerializer):
 
 
 class ReadonlyEventsListSerializer(ModelSerializer):
-    routes = RoutesWithNameAndPkSerializer(many=True)
-    nature_objects = NatureObjectsNameAndIdSerializer(many=True)
     datetime_start = serializers.DateTimeField()
     status = serializers.CharField(max_length=64)
 
     class Meta:
         model = Events
-        fields = ['name', 'photo', 'description', 'event_id',
-                  'nature_objects', 'routes', 'datetime_start',
+        fields = ['name', 'photo', 'description', 'event_id', 'datetime_start',
                   'status', 'adress',
                   ]
 
