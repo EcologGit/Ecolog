@@ -40,7 +40,7 @@ class ReadonlyEventsListSerializer(ModelSerializer):
         model = Events
         fields = ['name', 'photo', 'description', 'event_id',
                   'nature_objects', 'routes', 'datetime_start',
-                  'status',
+                  'status', 'adress',
                   ]
 
 
@@ -146,4 +146,4 @@ class OneEventSerializer(ModelSerializer):
     class Meta:
         model = Events
         fields = ('pk', 'name', 'time_start', 'status', 'photo', 
-                  'latitude_n', 'longitude_e', 'description',)
+                  'latitude_n', 'longitude_e', 'description', 'adress')
