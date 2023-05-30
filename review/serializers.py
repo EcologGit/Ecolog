@@ -194,8 +194,34 @@ class OneRouteSerializer(ModelSerializer):
         )
 
 
-class OneEventSerializer(ModelSerializer):
-    status = serializers.CharField(max_length=64)
+class StatusEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StatusesEvent
+        fields = ("name",)
+
+
+class RoutesNameAndLocalitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Routes
+        fields = (
+            "name",
+            "locality",
+        )
+
+
+class NatureAndLocalityObjectsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NatureObjects
+        fields = (
+            "name",
+            "locality",
+        )
+
+
+class OneNotFinishedEventSerializer(ModelSerializer):
+    status_id = StatusEventSerializer()
+    nature_objects = NatureAndLocalityObjectsSerializer(many=True)
+    routes = RoutesNameAndLocalitySerializer(many=True)
 
     class Meta:
         model = Events
@@ -203,13 +229,15 @@ class OneEventSerializer(ModelSerializer):
             "pk",
             "name",
             "time_start",
-            "status",
+            "time_of_close",
+            "status_id",
             "photo",
-            "latitude_n",
-            "longitude_e",
             "description",
             "adress",
+            "nature_objects",
+            "routes",
         )
+
 
 
 class OneSortPointSerializer(ModelSerializer):

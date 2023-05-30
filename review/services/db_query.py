@@ -14,6 +14,19 @@ from review.services.distance import get_distance
 """
 
 
+def get_objects_with_avg_rates(model: Model) -> QuerySet:
+    """
+    Возвращает запрос со средними оценками
+    (Пока нигде не используется, по-хорошему переписать нижние методы используя этот)
+    """
+    query = model.objects.annotate(
+        avg_availability=Avg("reports__rates__availability"),
+        avg_beauty=Avg("reports__rates__beauty"),
+        avg_purity=Avg("reports__rates__purity"),
+    )
+    return query
+
+
 def get_nature_objects_with_avg_rates() -> QuerySet:
     query = NatureObjects.objects.only(
         "object_id",
@@ -39,8 +52,8 @@ def get_routes_with_avg_rates() -> QuerySet:
         "photo",
     ).annotate(
         avg_availability=Avg("reports__rates__availability"),
-        avg_beauty=Avg("reports__rates__availability"),
-        avg_purity=Avg("reports__rates__availability"),
+        avg_beauty=Avg("reports__rates__beauty"),
+        avg_purity=Avg("reports__rates__purity"),
     )
     return query
 
@@ -74,13 +87,23 @@ def get_one_object_with_rates_by_id_or_not_found_error(model: Model, id: int) ->
     return get_object_or_404(query, pk=id)
 
 
+def get_one_event(id: int):
+    event = get_object_or_404(
+        Events.objects.prefetch_related("routes", "nature_objects").select_related(
+            "status_id"
+        ),
+        pk=id,
+    )
+    return event
+
+
 def get_events_actual() -> QuerySet:
     return Events.objects.filter(time_of_close__gt=datetime.now())
 
 
 def get_reports_statistic(object_with_reports: Model) -> dict:
     reports_info = (
-        object_with_reports.reports.all()
+        object_with_reports.reports
         .values("results__waste_id__unit_of_waste")
         .annotate(
             sum_amount=Sum("results__amount"),
@@ -93,6 +116,16 @@ def get_reports_statistic(object_with_reports: Model) -> dict:
     return reports_info
 
 
+def get_rates_statistic(object_with_reports):
+    rates_info = object_with_reports.reports.values("object_id") \
+    .annotate(
+        avg_availability=Avg("rates__availability"),
+        avg_beauty=Avg("rates__beauty"),
+        avg_purity=Avg("rates__purity"),
+    )
+
+    return rates_info
+
 def get_nearest_sort_points(object_type: Model, id: int, *args) -> dict:
     sort_points = SortPoints.objects.only("latitude_n", "longitude_e", *args)
 
@@ -101,9 +134,7 @@ def get_nearest_sort_points(object_type: Model, id: int, *args) -> dict:
             object = NatureObjects.objects.get(pk=id)
             coor_objects = (object.latitude_n, object.longitude_e)
             sort_points = filter(
-                lambda x: get_distance(
-                    coor_objects, (x.latitude_n, x.longitude_e)
-                )
+                lambda x: get_distance(coor_objects, (x.latitude_n, x.longitude_e))
                 < KM_DISTANCE_NEAR_POINT,
                 sort_points,
             )
@@ -116,7 +147,8 @@ def get_nearest_sort_points(object_type: Model, id: int, *args) -> dict:
                     coor_objects_begin, (x.latitude_n, x.longitude_e)
                 )
                 < KM_DISTANCE_NEAR_POINT
-                or get_distance(coor_objects_end, (x.latitude_n, x.longitude_e)) < KM_DISTANCE_NEAR_POINT,
+                or get_distance(coor_objects_end, (x.latitude_n, x.longitude_e))
+                < KM_DISTANCE_NEAR_POINT,
                 sort_points,
             )
     except Exception:
@@ -135,9 +167,7 @@ def get_nearest_nature_objects_for_sort_points(
     )
     nearest_nature_objects = list(
         filter(
-            lambda x: get_distance(
-                sort_point_coord, (x.latitude_n, x.longitude_e)
-            )
+            lambda x: get_distance(sort_point_coord, (x.latitude_n, x.longitude_e))
             < KM_DISTANCE_NEAR_POINT,
             nature_objects,
         )
@@ -155,9 +185,7 @@ def get_nearest_routes_for_sort_points(
     )
     nearest_nature_objects = list(
         filter(
-            lambda x: get_distance(
-                sort_point_coord, (x.start_n, x.start_e)
-            )
+            lambda x: get_distance(sort_point_coord, (x.start_n, x.start_e))
             < KM_DISTANCE_NEAR_POINT
             or get_distance(sort_point_coord, (x.end_n, x.end_e))
             < KM_DISTANCE_NEAR_POINT,
@@ -181,12 +209,6 @@ def get_actual_events_for_object(object_type: Model, id: int) -> QuerySet:
         return get_events_actual().filter(nature_objects__pk=id)
     elif object_type is Routes:
         return get_events_actual().filter(route_objects__pk=id)
-
-
-def get_one_event_info(id: int):
-    query = Events.objects.annotate(status=F("status_id__name"))
-
-    return get_object_or_404(query, pk=id)
 
 
 """def test_query():

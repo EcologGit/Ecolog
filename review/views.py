@@ -3,12 +3,16 @@ from review.services.db_query import (
     get_events_list,
     get_nearest_nature_objects_for_sort_points,
     get_nearest_routes_for_sort_points,
+    get_one_event,
+    get_one_object_with_rates_by_id_or_not_found_error,
+    get_rates_statistic,
+    get_reports_statistic,
 )
 from review.services.db_query import (
     get_routes_with_avg_rates,
     get_list_sort_points_with_waste_types,
 )
-from review.services.db_query import get_nearest_sort_points, get_one_event_info
+from review.services.db_query import get_nearest_sort_points
 from review.services.db_query import (
     get_reports_for_object,
     get_actual_events_for_object,
@@ -40,7 +44,7 @@ from review.serializers import (
 from review.serializers import (
     NearestSortPointsSerialzier,
     OneRouteSerializer,
-    OneEventSerializer,
+    OneNotFinishedEventSerializer,
 )
 
 # Create your views here.
@@ -76,10 +80,31 @@ class GetEventsView(ListAPIView):
 
 
 class GetOneEventView(APIView):
+
     def get(self, request, *args, **kwargs):
-        obj = get_one_event_info(kwargs["id"])
-        serializer = OneEventSerializer(instance=obj)
-        return Response(serializer.data)
+        event_id = kwargs['id']
+        event = get_one_event(event_id)
+        data_event = OneNotFinishedEventSerializer(event).data
+        if event.status_id.name != 'Завершено':
+            return data_event
+        else:
+            return Response(data_event | get_rates_statistic(event)[0] | {'reports_statistic': get_reports_statistic(event)})
+
+
+class GetEventsNatureObjects(ListAPIView):
+    serializer_class = NearestNatureObjectsToSortPointSerializer
+
+    def get_queryset(self):
+        event_id = self.kwargs['event_id']
+        return NatureObjects.objects.filter(events__pk=event_id)
+
+
+class GetEventsRoutes(ListAPIView):
+    serializer_class = NearestRoutesToSortPointSerializer
+
+    def get_queryset(self):
+        event_id = self.kwargs['event_id']
+        return Routes.objects.filter(events__pk=event_id)
 
 
 class GetGarbagePointsView(ListAPIView):
