@@ -171,6 +171,12 @@ class NearestRoutesToSortPointSerializer(ModelSerializer):
         fields = ("pk", "name", "photo")
 
 
+class EventsRoutesSerializer(ModelSerializer):
+    class Meta:
+        model = Routes
+        fields = ("pk", "name", "photo", "locality")
+
+
 class OneRouteSerializer(ModelSerializer):
     avg_availability = serializers.FloatField()
     avg_beauty = serializers.FloatField()

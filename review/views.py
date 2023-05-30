@@ -26,6 +26,7 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from eco.models import NatureObjects, Routes, Events, SortPoints, Favourites
 from review.serializers import (
+    EventsRoutesSerializer,
     NearestNatureObjectsToSortPointSerializer,
     NearestRoutesToSortPointSerializer,
     OneSortPointSerializer,
@@ -100,7 +101,7 @@ class GetEventsNatureObjects(ListAPIView):
 
 
 class GetEventsRoutes(ListAPIView):
-    serializer_class = NearestRoutesToSortPointSerializer
+    serializer_class = EventsRoutesSerializer
 
     def get_queryset(self):
         event_id = self.kwargs['event_id']
