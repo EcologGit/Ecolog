@@ -86,7 +86,7 @@ class GetOneEventView(APIView):
         event = get_one_event(event_id)
         data_event = OneNotFinishedEventSerializer(event).data
         if event.status_id.name != 'Завершено':
-            return data_event
+            return Response(data_event)
         else:
             return Response(data_event | get_rates_statistic(event)[0] | {'reports_statistic': get_reports_statistic(event)})
 
