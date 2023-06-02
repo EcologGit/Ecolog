@@ -1,11 +1,9 @@
-from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 from eco.models import NatureObjects, Reports
 from eco.models import (
     Routes,
     StatusesEvent,
     Events,
-    Districts,
     SortPoints,
     WasteTypes,
     Rates,
@@ -15,7 +13,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class ReadonlyNatureObjectsWithAvgRatesSerializer(ModelSerializer):
+class ReadonlyNatureObjectsWithAvgRatesSerializer(serializers.ModelSerializer):
     avg_availability = serializers.FloatField()
     avg_beauty = serializers.FloatField()
     avg_purity = serializers.FloatField()
@@ -34,19 +32,19 @@ class ReadonlyNatureObjectsWithAvgRatesSerializer(ModelSerializer):
         )
 
 
-class RoutesWithNameAndPkSerializer(ModelSerializer):
+class RoutesWithNameAndPkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Routes
         fields = ["name", "pk"]
 
 
-class NatureObjectsNameAndIdSerializer(ModelSerializer):
+class NatureObjectsNameAndIdSerializer(serializers.ModelSerializer):
     class Meta:
         model = NatureObjects
         fields = ["name", "pk"]
 
 
-class ReadonlyEventsListSerializer(ModelSerializer):
+class ReadonlyEventsListSerializer(serializers.ModelSerializer):
     datetime_start = serializers.DateTimeField()
     status = serializers.CharField(max_length=64)
 
@@ -63,7 +61,7 @@ class ReadonlyEventsListSerializer(ModelSerializer):
         ]
 
 
-class ReadOnlyRoutesWithAvgRatesSerializer(ModelSerializer):
+class ReadOnlyRoutesWithAvgRatesSerializer(serializers.ModelSerializer):
     avg_availability = serializers.FloatField()
     avg_beauty = serializers.FloatField()
     avg_purity = serializers.FloatField()
@@ -83,13 +81,13 @@ class ReadOnlyRoutesWithAvgRatesSerializer(ModelSerializer):
         ]
 
 
-class WastTypePointNameSerializer(ModelSerializer):
+class WastTypePointNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = WasteTypes
         fields = ["name"]
 
 
-class ReadOnlyListSortPointsSerializer(ModelSerializer):
+class ReadOnlyListSortPointsSerializer(serializers.ModelSerializer):
     wast_types = WastTypePointNameSerializer(many=True)
 
     class Meta:
@@ -105,13 +103,13 @@ class ReadOnlyListSortPointsSerializer(ModelSerializer):
         ]
 
 
-class EventListInfotSerializer(ModelSerializer):
+class EventListInfotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Events
         fields = ("photo", "name", "time_start")
 
 
-class OneNatureObjectSerializer(ModelSerializer):
+class OneNatureObjectSerializer(serializers.ModelSerializer):
     avg_availability = serializers.FloatField()
     avg_beauty = serializers.FloatField()
     avg_purity = serializers.FloatField()
@@ -132,19 +130,19 @@ class OneNatureObjectSerializer(ModelSerializer):
         )
 
 
-class ReportRatesSerializer(ModelSerializer):
+class ReportRatesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rates
         fields = ("availability", "beauty", "purity")
 
 
-class UserNameSerializer(ModelSerializer):
+class UserNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("public_name",)
 
 
-class ReportsForObjectSeriralizer(ModelSerializer):
+class ReportsForObjectSeriralizer(serializers.ModelSerializer):
     rates = ReportRatesSerializer()
     user_id = UserNameSerializer()
 
@@ -153,31 +151,31 @@ class ReportsForObjectSeriralizer(ModelSerializer):
         fields = ("description", "created_at", "rates", "user_id")
 
 
-class NearestSortPointsSerialzier(ModelSerializer):
+class NearestSortPointsSerialzier(serializers.ModelSerializer):
     class Meta:
         model = SortPoints
         fields = ("pk", "name", "schedule", "photo")
 
 
-class NearestNatureObjectsToSortPointSerializer(ModelSerializer):
+class NearestNatureObjectsToSortPointSerializer(serializers.ModelSerializer):
     class Meta:
         model = NatureObjects
         fields = ("pk", "name", "locality", "photo")
 
 
-class NearestRoutesToSortPointSerializer(ModelSerializer):
+class NearestRoutesToSortPointSerializer(serializers.ModelSerializer):
     class Meta:
         model = Routes
         fields = ("pk", "name", "photo")
 
 
-class EventsRoutesSerializer(ModelSerializer):
+class EventsRoutesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Routes
         fields = ("pk", "name", "photo", "locality")
 
 
-class OneRouteSerializer(ModelSerializer):
+class OneRouteSerializer(serializers.ModelSerializer):
     avg_availability = serializers.FloatField()
     avg_beauty = serializers.FloatField()
     avg_purity = serializers.FloatField()
@@ -197,6 +195,7 @@ class OneRouteSerializer(ModelSerializer):
             "avg_availability",
             "avg_beauty",
             "avg_purity",
+            "photo",
         )
 
 
@@ -224,7 +223,7 @@ class NatureAndLocalityObjectsSerializer(serializers.ModelSerializer):
         )
 
 
-class OneNotFinishedEventSerializer(ModelSerializer):
+class OneNotFinishedEventSerializer(serializers.ModelSerializer):
     status_id = StatusEventSerializer()
 
     class Meta:
@@ -242,7 +241,7 @@ class OneNotFinishedEventSerializer(ModelSerializer):
 
 
 
-class OneSortPointSerializer(ModelSerializer):
+class OneSortPointSerializer(serializers.ModelSerializer):
     wast_types = WastTypePointNameSerializer(many=True)
 
     class Meta:

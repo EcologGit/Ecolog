@@ -31,5 +31,4 @@ urlpatterns = [
     path("events/<int:id>/", GetOneEventView.as_view()),
     path("sortPoints/", GetGarbagePointsView.as_view()),
     path("sortPoints/<int:id>/", GetOneGarbagePointView.as_view()),
-    path("test/", TestView.as_view()),
 ]

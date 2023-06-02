@@ -24,7 +24,7 @@ from review.services.format import (
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from eco.models import NatureObjects, Routes, Events, SortPoints, Favourites
+from eco.models import NatureObjects, Routes, SortPoints
 from review.serializers import (
     EventsRoutesSerializer,
     NearestNatureObjectsToSortPointSerializer,
@@ -81,23 +81,25 @@ class GetEventsView(ListAPIView):
 
 
 class GetOneEventView(APIView):
-
     def get(self, request, *args, **kwargs):
-        event_id = kwargs['id']
+        event_id = kwargs["id"]
         event = get_one_event(event_id)
         data_event = OneNotFinishedEventSerializer(event).data
-        if event.status_id.name != 'Завершено':
+        if event.status_id.name != "Завершено":
             return Response(data_event)
         else:
-            print(get_rates_statistic(event))
-            return Response(data_event | get_rates_statistic(event) | {'reports_statistic': get_reports_statistic(event)})
+            return Response(
+                data_event
+                | get_rates_statistic(event)
+                | {"reports_statistic": get_reports_statistic(event)}
+            )
 
 
 class GetEventsNatureObjects(ListAPIView):
     serializer_class = NearestNatureObjectsToSortPointSerializer
 
     def get_queryset(self):
-        event_id = self.kwargs['event_id']
+        event_id = self.kwargs["event_id"]
         return NatureObjects.objects.filter(events__pk=event_id)
 
 
@@ -105,7 +107,7 @@ class GetEventsRoutes(ListAPIView):
     serializer_class = EventsRoutesSerializer
 
     def get_queryset(self):
-        event_id = self.kwargs['event_id']
+        event_id = self.kwargs["event_id"]
         return Routes.objects.filter(events__pk=event_id)
 
 
@@ -119,12 +121,6 @@ class GetOneGarbagePointView(RetrieveAPIView):
     lookup_field = "pk"
     lookup_url_kwarg = "id"
     serializer_class = OneSortPointSerializer
-
-
-class TestView(APIView):
-    def get(self, request, *args, **kwargs):
-        print(Favourites.objects.all()[0].content_object)
-        return Response()
 
 
 class GetReportsForObjectView(ListAPIView):
@@ -170,7 +166,5 @@ class GetNearestRoutesToSortPoint(ListAPIView):
 
     def get_queryset(self):
         return get_nearest_routes_for_sort_points(
-            self.kwargs["sort_point_id"],
-            routes_fields_output=('pk', 'name', 'photo')
+            self.kwargs["sort_point_id"], routes_fields_output=("pk", "name", "photo")
         )
-
