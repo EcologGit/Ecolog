@@ -89,7 +89,8 @@ class GetOneEventView(APIView):
         if event.status_id.name != 'Завершено':
             return Response(data_event)
         else:
-            return Response(data_event | get_rates_statistic(event)[0] | {'reports_statistic': get_reports_statistic(event)})
+            print(get_rates_statistic(event))
+            return Response(data_event | get_rates_statistic(event) | {'reports_statistic': get_reports_statistic(event)})
 
 
 class GetEventsNatureObjects(ListAPIView):

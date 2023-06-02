@@ -103,8 +103,7 @@ def get_events_actual() -> QuerySet:
 
 def get_reports_statistic(object_with_reports: Model) -> dict:
     reports_info = (
-        object_with_reports.reports
-        .values("results__waste_id__unit_of_waste")
+        object_with_reports.reports.values("results__waste_id__unit_of_waste")
         .annotate(
             sum_amount=Sum("results__amount"),
         )
@@ -116,15 +115,23 @@ def get_reports_statistic(object_with_reports: Model) -> dict:
     return reports_info
 
 
-def get_rates_statistic(object_with_reports):
-    rates_info = object_with_reports.reports.values("object_id") \
-    .annotate(
-        avg_availability=Avg("rates__availability"),
-        avg_beauty=Avg("rates__beauty"),
-        avg_purity=Avg("rates__purity"),
-    )
+def get_rates_statistic(object_with_reports) -> dict:
+    """
+    Возвращает оценки у модели, в которой есть отчёты, иначе 
+    возвращает словарь с None значениями
+    """
+    print(object_with_reports.reports)
+    try:
+        rates_info = object_with_reports.reports.values("object_id").annotate(
+            avg_availability=Avg("rates__availability"),
+            avg_beauty=Avg("rates__beauty"),
+            avg_purity=Avg("rates__purity"),
+        )[0]
+    except IndexError:
+        rates_info = {"avg_availability": None, "avg_beauty": None, "avg_purity": None}
 
     return rates_info
+
 
 def get_nearest_sort_points(object_type: Model, id: int, *args) -> dict:
     sort_points = SortPoints.objects.only("latitude_n", "longitude_e", *args)
