@@ -21,9 +21,8 @@ class ObjectInfoAndReportStatisitcView(APIView):
     object_name = 'object_info'
 
     def get(self, request, *args, **kwargs):
-
+        obj = get_one_object_with_rates_by_id_or_not_found_error(self.model, kwargs.get('id'))
         try:
-            obj = get_one_object_with_rates_by_id_or_not_found_error(self.model, kwargs.get('id'))
             report_information = get_reports_statistic(obj)
             serializer = self.serializer_class(instance=obj)
 
