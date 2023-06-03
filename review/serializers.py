@@ -235,6 +235,7 @@ class OneRouteSerializer(serializers.ModelSerializer):
             "pk",
             "name",
             "duration",
+            "locality",
             "length",
             "description",
             "start_n",
