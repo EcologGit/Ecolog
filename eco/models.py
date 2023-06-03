@@ -97,23 +97,6 @@ class WasteTypes(models.Model):
         return self.name
 
 
-class Reports(models.Model):
-    report_id = models.AutoField(primary_key=True)  
-    description = models.TextField(max_length=1024)
-    photo = models.ImageField(blank=True, null=True, upload_to='reports/')  # This field type is a guess.
-    created_at = models.DateTimeField(auto_now_add=True)
-    status_id_r = models.ForeignKey(StatusesReport, models.DO_NOTHING, related_name='reports')  
-    user_id = models.ForeignKey(CustomUser, models.CASCADE, related_name='reports')
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
-    class Meta:
-        indexes = [
-            models.Index(fields=["content_type", "object_id"]),
-        ]
-
-
 class SortPoints(models.Model):
     point_id = models.AutoField(primary_key=True)
     photo = models.ImageField(blank=True, null=True, upload_to='sort_points/')
@@ -138,12 +121,29 @@ class SortPoints(models.Model):
     longitude_e = models.DecimalField(max_digits=11, decimal_places=8, max_length=9)  
     organization_inn = models.ForeignKey(Organizations, models.CASCADE)
     schedule = models.CharField(max_length=100, blank=True, null=True)
-    reports = GenericRelation(Reports)
     favourites = GenericRelation(Favourites)
     wast_types = models.ManyToManyField(WasteTypes)
 
     def __str__(self):
         return self.name
+
+
+class Reports(models.Model):
+    report_id = models.AutoField(primary_key=True)  
+    description = models.TextField(max_length=1024)
+    photo = models.ImageField(blank=True, null=True, upload_to='reports/')  # This field type is a guess.
+    created_at = models.DateTimeField(auto_now_add=True)
+    status_id_r = models.ForeignKey(StatusesReport, models.DO_NOTHING, related_name='reports')  
+    user_id = models.ForeignKey(CustomUser, models.CASCADE, related_name='reports')
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    point_id = models.ForeignKey(SortPoints, on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
+        ]
 
 
 class Routes(models.Model):
@@ -218,8 +218,8 @@ class Events(models.Model):
     time_of_close = models.DateTimeField()
     reports = GenericRelation(Reports, related_query_name='events')
     favourites = GenericRelation(Favourites)
-    nature_objects = models.ManyToManyField(NatureObjects, blank=True)
-    routes = models.ManyToManyField(Routes, blank=True)
+    nature_objects = models.ManyToManyField(NatureObjects, blank=True, related_name="events")
+    routes = models.ManyToManyField(Routes, blank=True, related_name="events")
 
     def __str__(self):
         return self.name
