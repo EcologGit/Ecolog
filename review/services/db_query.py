@@ -120,7 +120,6 @@ def get_rates_statistic(object_with_reports) -> dict:
     Возвращает оценки у модели, в которой есть отчёты, иначе 
     возвращает словарь с None значениями
     """
-    print(object_with_reports.reports)
     try:
         rates_info = object_with_reports.reports.values("object_id").annotate(
             avg_availability=Avg("rates__availability"),
