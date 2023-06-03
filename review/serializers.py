@@ -276,6 +276,8 @@ class NatureAndLocalityObjectsSerializer(serializers.ModelSerializer):
 class OneNotFinishedEventSerializer(serializers.ModelSerializer):
     status_id = StatusEventSerializer()
     photo = serializers.SerializerMethodField()
+    nature_objects = NatureAndLocalityObjectsSerializer(many=True)
+    routes = RoutesNameAndLocalitySerializer(many=True)
 
     def get_photo(self, obj):
         return obj.photo.url if obj.photo else None
@@ -291,6 +293,8 @@ class OneNotFinishedEventSerializer(serializers.ModelSerializer):
             "photo",
             "description",
             "adress",
+            "nature_objects",
+            "routes",
         )
 
 
