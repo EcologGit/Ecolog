@@ -21,6 +21,7 @@ class ReadonlyNatureObjectsWithAvgRatesSerializer(serializers.ModelSerializer):
 
     def get_photo(self, obj):
         return obj.photo.url if obj.photo else None
+
     class Meta:
         model = NatureObjects
         fields = (
