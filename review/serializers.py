@@ -17,7 +17,10 @@ class ReadonlyNatureObjectsWithAvgRatesSerializer(serializers.ModelSerializer):
     avg_availability = serializers.FloatField()
     avg_beauty = serializers.FloatField()
     avg_purity = serializers.FloatField()
+    photo = serializers.SerializerMethodField()
 
+    def get_photo(self, obj):
+        return obj.photo.url if obj.photo else None
     class Meta:
         model = NatureObjects
         fields = (
@@ -47,6 +50,10 @@ class NatureObjectsNameAndIdSerializer(serializers.ModelSerializer):
 class ReadonlyEventsListSerializer(serializers.ModelSerializer):
     datetime_start = serializers.DateTimeField()
     status = serializers.CharField(max_length=64)
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        return obj.photo.url if obj.photo else None
 
     class Meta:
         model = Events
@@ -65,6 +72,10 @@ class ReadOnlyRoutesWithAvgRatesSerializer(serializers.ModelSerializer):
     avg_availability = serializers.FloatField()
     avg_beauty = serializers.FloatField()
     avg_purity = serializers.FloatField()
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        return obj.photo.url if obj.photo else None
 
     class Meta:
         model = Routes
@@ -89,6 +100,10 @@ class WastTypePointNameSerializer(serializers.ModelSerializer):
 
 class ReadOnlyListSortPointsSerializer(serializers.ModelSerializer):
     wast_types = WastTypePointNameSerializer(many=True)
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        return obj.photo.url if obj.photo else None
 
     class Meta:
         model = SortPoints
@@ -104,6 +119,11 @@ class ReadOnlyListSortPointsSerializer(serializers.ModelSerializer):
 
 
 class EventListInfotSerializer(serializers.ModelSerializer):
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        return obj.photo.url if obj.photo else None
+
     class Meta:
         model = Events
         fields = ("photo", "name", "time_start")
@@ -113,6 +133,10 @@ class OneNatureObjectSerializer(serializers.ModelSerializer):
     avg_availability = serializers.FloatField()
     avg_beauty = serializers.FloatField()
     avg_purity = serializers.FloatField()
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        return obj.photo.url if obj.photo else None
 
     class Meta:
         model = NatureObjects
@@ -152,24 +176,44 @@ class ReportsForObjectSeriralizer(serializers.ModelSerializer):
 
 
 class NearestSortPointsSerialzier(serializers.ModelSerializer):
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        return obj.photo.url if obj.photo else None
+
     class Meta:
         model = SortPoints
         fields = ("pk", "name", "schedule", "photo")
 
 
 class NearestNatureObjectsToSortPointSerializer(serializers.ModelSerializer):
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        return obj.photo.url if obj.photo else None
+
     class Meta:
         model = NatureObjects
         fields = ("pk", "name", "locality", "photo")
 
 
 class NearestRoutesToSortPointSerializer(serializers.ModelSerializer):
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        return obj.photo.url if obj.photo else None
+
     class Meta:
         model = Routes
         fields = ("pk", "name", "photo")
 
 
 class EventsRoutesSerializer(serializers.ModelSerializer):
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        return obj.photo.url if obj.photo else None
+
     class Meta:
         model = Routes
         fields = ("pk", "name", "photo", "locality")
@@ -179,6 +223,10 @@ class OneRouteSerializer(serializers.ModelSerializer):
     avg_availability = serializers.FloatField()
     avg_beauty = serializers.FloatField()
     avg_purity = serializers.FloatField()
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        return obj.photo.url if obj.photo else None
 
     class Meta:
         model = Routes
@@ -225,6 +273,10 @@ class NatureAndLocalityObjectsSerializer(serializers.ModelSerializer):
 
 class OneNotFinishedEventSerializer(serializers.ModelSerializer):
     status_id = StatusEventSerializer()
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        return obj.photo.url if obj.photo else None
 
     class Meta:
         model = Events
@@ -240,9 +292,12 @@ class OneNotFinishedEventSerializer(serializers.ModelSerializer):
         )
 
 
-
 class OneSortPointSerializer(serializers.ModelSerializer):
     wast_types = WastTypePointNameSerializer(many=True)
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        return obj.photo.url if obj.photo else None
 
     class Meta:
         model = SortPoints
