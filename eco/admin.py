@@ -1,6 +1,9 @@
 from django.contrib import admin
 from .models import *
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin
 
+User = get_user_model()
 
 @admin.register(Districts)
 class CategoryDistricts(admin.ModelAdmin):
@@ -78,3 +81,4 @@ class CategoryStatusesR(admin.ModelAdmin):
 class CategoryCategoryObjDic(admin.ModelAdmin):
     list_display = ('category_obj_id', 'name')
 
+admin.site.register(User, UserAdmin)
