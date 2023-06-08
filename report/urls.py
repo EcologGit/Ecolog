@@ -8,4 +8,5 @@ urlpatterns = [
     path('nature-objects-search-line/', GetListNatureObjectsApi.as_view()),
     path('routes-search-line/', GetListRoutesObjectsApi.as_view()),
     path('events-search-line/', GetListEventsObjectsApi.as_view()),
+    path('report/<int:pk>/', RetriveReportApi.as_view()),
 ]

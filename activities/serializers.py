@@ -34,6 +34,10 @@ class ListReportsSerializer(serializers.ModelSerializer):
     user_id = UserReportSerializer()
     results = ResultsReportSerializer(many=True)
     obj = serializers.SerializerMethodField()
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, object):
+        return object.photo.url if object.photo else None
 
     def get_obj(self, obj):
         return {

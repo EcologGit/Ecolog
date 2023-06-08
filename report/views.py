@@ -10,6 +10,7 @@ from report.serializers import (
     SearchListRoutesSerialzer,
     SearchListNatureObjectsSerialzer,
     SearchListEventsSerialzer,
+    DetailReportSerializer,
 )
 from report.util import first_el_from_request_data
 from rest_framework.generics import ListAPIView
@@ -20,6 +21,7 @@ from eco.models import (
     Routes,
     Events
 )
+from report.services.db_query import get_report_by_pk_or_404
 
 
 # Create your views here.
@@ -45,6 +47,12 @@ class CreateReportApi(APIView):
         serializer.create(serializer.validated_data)
         return Response()
 
+
+class RetriveReportApi(APIView):
+
+    def get(self, request, *args, **kwargs):
+        report = get_report_by_pk_or_404(kwargs['pk'])
+        return Response(DetailReportSerializer(report).data)
 
 class GetListSortPointsApi(ListAPIView):
     serializer_class = SearchListSortPointSerialzer
