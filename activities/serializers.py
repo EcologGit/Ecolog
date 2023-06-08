@@ -33,10 +33,16 @@ class ListReportsSerializer(serializers.ModelSerializer):
     type_obj_dt = get_object_types_from_id_in_contenttypes_dict()
     user_id = UserReportSerializer()
     results = ResultsReportSerializer(many=True)
-    type_obj = serializers.SerializerMethodField()
+    obj = serializers.SerializerMethodField()
 
-    def get_type_obj(self, obj):
-        return self.type_obj_dt[obj.content_type]
+    def get_obj(self, obj):
+        return {
+            "name": obj.content_object.name,
+            "locality": obj.content_object.locality
+            if hasattr(obj.content_object, "locality")
+            else None,
+            "type_obj": self.type_obj_dt[obj.content_type]
+        }
 
     class Meta:
         model = Reports
@@ -47,5 +53,5 @@ class ListReportsSerializer(serializers.ModelSerializer):
             "created_at",
             "user_id",
             "results",
-            "type_obj",
+            "obj",
         )
