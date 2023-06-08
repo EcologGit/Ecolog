@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'review.apps.ReviewConfig',
     'users.apps.UsersConfig',
     'report.apps.ReportConfig',
+    'activities.apps.ActivitiesConfig',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
