@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from eco.models import Reports, Rates, Results, WasteTypes, SortPoints
+from eco.models import Reports, Rates, Results, WasteTypes, SortPoints, NatureObjects, Routes, Events
 from django.db import transaction
 from django.contrib.contenttypes.models import ContentType
 from eco.models import Reports, StatusesReport
@@ -8,7 +8,7 @@ from review.config import OBJECT_TYPE_MAP
 from rest_framework.exceptions import NotFound
 
 
-class RatesCreateSerializer(serializers.ModelSerializer):
+class CreateRatesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rates
         fields = [
@@ -27,7 +27,7 @@ class WasteTypesSerializer(serializers.ModelSerializer):
         ]
 
 
-class ResultsCreateSerializer(serializers.ModelSerializer):
+class CreateResultsSerializer(serializers.ModelSerializer):
     waste_id = WasteTypesSerializer()
 
     class Meta:
@@ -35,9 +35,9 @@ class ResultsCreateSerializer(serializers.ModelSerializer):
         fields = ["amount", "waste_id"]
 
 
-class ReportCreateSerializer(serializers.ModelSerializer):
-    rate = RatesCreateSerializer()
-    results = ResultsCreateSerializer(many=True)
+class CreateReportSerializer(serializers.ModelSerializer):
+    rate = CreateRatesSerializer()
+    results = CreateResultsSerializer(many=True)
     report_status = serializers.CharField(max_length=64)
     point_id = serializers.PrimaryKeyRelatedField(
         required=False, queryset=SortPoints.objects.all()
@@ -103,10 +103,31 @@ class ReportCreateSerializer(serializers.ModelSerializer):
         return report_instance
 
 
-class SortPointNamesSerialzer(serializers.ModelSerializer):
+class SearchListSortPointSerialzer(serializers.ModelSerializer):
 
     class Meta:
         model = SortPoints
+        fields = ("pk", "name", )
+
+
+class SearchListNatureObjectsSerialzer(serializers.ModelSerializer):
+
+    class Meta:
+        model = NatureObjects
+        fields = ("pk", "name", )
+
+
+class SearchListRoutesSerialzer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Routes
+        fields = ("pk", "name", )
+
+
+class SearchListEventsSerialzer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Events
         fields = ("pk", "name", )
 
 """from rest_framework import serializers
