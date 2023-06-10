@@ -35,6 +35,14 @@ class ListReportsSerializer(serializers.ModelSerializer):
     results = ResultsReportSerializer(many=True)
     obj = serializers.SerializerMethodField()
     photo = serializers.SerializerMethodField()
+    rates = serializers.SerializerMethodField()
+
+    def get_rates(self, obj):
+        return {
+            "availability": obj.rates.availability,
+            "beauty": obj.rates.beauty,
+            "purity": obj.rates.purity,
+        }
 
     def get_photo(self, object):
         return object.photo.url if object.photo else None
@@ -58,4 +66,5 @@ class ListReportsSerializer(serializers.ModelSerializer):
             "user_id",
             "results",
             "obj",
+            "rates",
         )
