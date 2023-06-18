@@ -47,12 +47,15 @@ from review.serializers import (
     OneRouteSerializer,
     OneNotFinishedEventSerializer,
 )
+from rest_framework import filters
 
 # Create your views here.
 
 
 class GetPlacesView(ListAPIView):
     serializer_class = ReadonlyNatureObjectsWithAvgRatesSerializer
+    filter_backends = (filters.SearchFilter, )
+    search_fields = ('name', )
 
     def get_queryset(self):
         return get_nature_objects_with_avg_rates()
@@ -65,6 +68,8 @@ class GetInformationOnePlaceView(ObjectInfoAndReportStatisitcView):
 
 class GetRoutesView(ListAPIView):
     serializer_class = ReadOnlyRoutesWithAvgRatesSerializer
+    filter_backends = (filters.SearchFilter, )
+    search_fields = ('name', )
 
     def get_queryset(self):
         return get_routes_with_avg_rates()
@@ -78,6 +83,8 @@ class GetInformationOneRouteView(ObjectInfoAndReportStatisitcView):
 class GetEventsView(ListAPIView):
     serializer_class = ReadonlyEventsListSerializer
     queryset = get_events_list()
+    filter_backends = (filters.SearchFilter, )
+    search_fields = ('name', )
 
 
 class GetOneEventView(APIView):
@@ -114,6 +121,8 @@ class GetEventsRoutes(ListAPIView):
 class GetGarbagePointsView(ListAPIView):
     queryset = get_list_sort_points_with_waste_types()
     serializer_class = ReadOnlyListSortPointsSerializer
+    filter_backends = (filters.SearchFilter, )
+    search_fields = ('name', )
 
 
 class GetOneGarbagePointView(RetrieveAPIView):

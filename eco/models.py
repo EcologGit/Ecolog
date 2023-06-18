@@ -13,17 +13,16 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from smart_selects.db_fields import ChainedForeignKey
 
 
-
 class CustomUser(AbstractUser):
     SEX = (
-        ('M', 'Мужской'),
-        ('F', 'Женский'),
+        ("M", "Мужской"),
+        ("F", "Женский"),
     )
     public_name = models.CharField(max_length=100)
     sex = models.CharField(choices=SEX, max_length=1)
     birth_date = models.DateField(null=True)
     locality = models.CharField(max_length=100, null=True)
-    photo = models.ImageField(null=True, upload_to='user/')
+    photo = models.ImageField(null=True, upload_to="user/")
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -36,7 +35,7 @@ class Admarea(models.Model):
 
 
 class CategoryObjDict(models.Model):
-    category_obj_id = models.AutoField(primary_key=True)#?
+    category_obj_id = models.AutoField(primary_key=True)  # ?
     name = models.CharField(max_length=64)
 
     def __str__(self):
@@ -44,14 +43,16 @@ class CategoryObjDict(models.Model):
 
 
 class Organizations(models.Model):
-    inn = models.DecimalField(primary_key=True, max_digits=12, decimal_places=0, max_length=12)
+    inn = models.DecimalField(
+        primary_key=True, max_digits=12, decimal_places=0, max_length=12
+    )
     name = models.CharField(max_length=64)
     email = models.EmailField(max_length=64)
-    phone_number = models.CharField(max_length=12) #Исправить
+    phone_number = models.CharField(max_length=12)  # Исправить
 
 
 class StatusesEvent(models.Model):
-    status_id = models.AutoField(primary_key=True)  
+    status_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=64)
 
     def __str__(self):
@@ -60,7 +61,9 @@ class StatusesEvent(models.Model):
 
 class Districts(models.Model):
     district_id = models.AutoField(primary_key=True)
-    admarea_id = models.ForeignKey(Admarea, models.SET_NULL, null=True, blank=True, related_name='districts')  
+    admarea_id = models.ForeignKey(
+        Admarea, models.SET_NULL, null=True, blank=True, related_name="districts"
+    )
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -69,10 +72,10 @@ class Districts(models.Model):
 
 class Favourites(models.Model):
     fav_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(CustomUser, models.CASCADE, related_name='favourites')  
+    user_id = models.ForeignKey(CustomUser, models.CASCADE, related_name="favourites")
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey("content_type", "object_id")
 
     class Meta:
         indexes = [
@@ -81,7 +84,7 @@ class Favourites(models.Model):
 
 
 class StatusesReport(models.Model):
-    status_id_r = models.AutoField(primary_key=True)  
+    status_id_r = models.AutoField(primary_key=True)
     name = models.CharField(max_length=64)
 
     def __str__(self):
@@ -99,9 +102,11 @@ class WasteTypes(models.Model):
 
 class SortPoints(models.Model):
     point_id = models.AutoField(primary_key=True)
-    photo = models.ImageField(blank=True, null=True, upload_to='sort_points/')
+    photo = models.ImageField(blank=True, null=True, upload_to="sort_points/")
     name = models.CharField(max_length=100)
-    admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True, related_name='sort_points')
+    admarea_id = models.ForeignKey(
+        Admarea, models.SET_NULL, blank=True, null=True, related_name="sort_points"
+    )
     district_id = ChainedForeignKey(
         Districts,
         chained_field="admarea_id",
@@ -109,36 +114,46 @@ class SortPoints(models.Model):
         show_all=False,
         auto_choose=True,
         sort=True,
-        blank=True, 
+        blank=True,
         null=True,
-        on_delete=models.SET_NULL)
-    #models.ForeignKey(Districts, models.SET_NULL, blank=True, null=True)
+        on_delete=models.SET_NULL,
+    )
+    # models.ForeignKey(Districts, models.SET_NULL, blank=True, null=True)
     transport_description = models.TextField(max_length=512)
     adress = models.CharField(max_length=256)
     locality = models.CharField(max_length=256)
     description = models.TextField(max_length=1024)
-    latitude_n = models.DecimalField(max_digits=10, decimal_places=8, max_length=9)  
-    longitude_e = models.DecimalField(max_digits=11, decimal_places=8, max_length=9)  
+    latitude_n = models.DecimalField(max_digits=10, decimal_places=8, max_length=9)
+    longitude_e = models.DecimalField(max_digits=11, decimal_places=8, max_length=9)
     organization_inn = models.ForeignKey(Organizations, models.CASCADE)
     schedule = models.CharField(max_length=100, blank=True, null=True)
     favourites = GenericRelation(Favourites)
     wast_types = models.ManyToManyField(WasteTypes)
+
+    class Meta:
+        ordering = ('-pk', )
 
     def __str__(self):
         return self.name
 
 
 class Reports(models.Model):
-    report_id = models.AutoField(primary_key=True)  
+    report_id = models.AutoField(primary_key=True)
     description = models.TextField(max_length=1024)
-    photo = models.ImageField(blank=True, null=True, upload_to='reports/')  # This field type is a guess.
+    photo = models.ImageField(
+        blank=True, null=True, upload_to="reports/"
+    )  # This field type is a guess.
     created_at = models.DateTimeField(auto_now_add=True)
-    status_id_r = models.ForeignKey(StatusesReport, models.DO_NOTHING, related_name='reports')  
-    user_id = models.ForeignKey(CustomUser, models.CASCADE, related_name='reports')
+    status_id_r = models.ForeignKey(
+        StatusesReport, models.DO_NOTHING, related_name="reports"
+    )
+    user_id = models.ForeignKey(CustomUser, models.CASCADE, related_name="reports")
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-    point_id = models.ForeignKey(SortPoints, on_delete=models.SET_NULL, null=True, blank=True)
+    content_object = GenericForeignKey("content_type", "object_id")
+    point_id = models.ForeignKey(
+        SortPoints, on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     class Meta:
         indexes = [
@@ -148,27 +163,29 @@ class Reports(models.Model):
 
 class Routes(models.Model):
     DIFFICULT = (
-        ('A', 'Очень легко'),
-        ('B', 'Легко'),
-        ('C', 'Средне'),
-        ('D', 'Сложно'),
+        ("A", "Очень легко"),
+        ("B", "Легко"),
+        ("C", "Средне"),
+        ("D", "Сложно"),
     )
 
     route_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=1024)
     start_n = models.DecimalField(max_digits=10, decimal_places=8)
-    start_e = models.DecimalField(max_digits=11, decimal_places=8)  
-    end_n = models.DecimalField(max_digits=10, decimal_places=8, null=True, blank=True)  
-    end_e = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)  
-    diffictulity_level = models.CharField(max_length=1, default='A', choices=DIFFICULT)  
+    start_e = models.DecimalField(max_digits=11, decimal_places=8)
+    end_n = models.DecimalField(max_digits=10, decimal_places=8, null=True, blank=True)
+    end_e = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
+    diffictulity_level = models.CharField(max_length=1, default="A", choices=DIFFICULT)
     length = models.FloatField()
     duration = models.TextField()  # This field type is a guess.
     transport_description = models.TextField(max_length=512)
     locality = models.CharField(max_length=256)
     price = models.IntegerField()
-    photo = models.ImageField(blank=True, null=True, upload_to='routes/')  # This field type is a guess.
-    reports = GenericRelation(Reports, related_query_name='routes')
+    photo = models.ImageField(
+        blank=True, null=True, upload_to="routes/"
+    )  # This field type is a guess.
+    reports = GenericRelation(Reports, related_query_name="routes")
     favourites = GenericRelation(Favourites)
 
     def __str__(self):
@@ -179,10 +196,14 @@ class NatureObjects(models.Model):
     object_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=1024)
-    category_obj_id = models.ForeignKey(CategoryObjDict, models.SET_NULL, related_name='nature_objects', null=True)
-    latitude_n = models.DecimalField(max_digits=10, decimal_places=8, max_length=9)  
+    category_obj_id = models.ForeignKey(
+        CategoryObjDict, models.SET_NULL, related_name="nature_objects", null=True
+    )
+    latitude_n = models.DecimalField(max_digits=10, decimal_places=8, max_length=9)
     longitude_e = models.DecimalField(max_digits=11, decimal_places=8, max_length=9)
-    admarea_id = models.ForeignKey(Admarea, models.SET_NULL, blank=True, null=True, related_name='nature_objects')
+    admarea_id = models.ForeignKey(
+        Admarea, models.SET_NULL, blank=True, null=True, related_name="nature_objects"
+    )
     district_id = ChainedForeignKey(
         Districts,
         chained_field="admarea_id",
@@ -190,18 +211,24 @@ class NatureObjects(models.Model):
         show_all=False,
         auto_choose=True,
         sort=True,
-        blank=True, 
+        blank=True,
         null=True,
-        on_delete=models.SET_NULL)
+        on_delete=models.SET_NULL,
+    )
     locality = models.CharField(max_length=256)
     transport_description = models.TextField(max_length=512)
     adress = models.CharField(max_length=256)
-    organization_inn = models.ForeignKey(Organizations, models.SET_NULL, blank=True, null=True)
+    organization_inn = models.ForeignKey(
+        Organizations, models.SET_NULL, blank=True, null=True
+    )
     has_parking = models.BooleanField(blank=True, null=True)
-    photo = models.ImageField(blank=True, null=True, upload_to='nature_objects/')
+    photo = models.ImageField(blank=True, null=True, upload_to="nature_objects/")
     schedule = models.CharField(max_length=100, blank=True, null=True)
-    reports = GenericRelation(Reports, related_query_name='nature_object')
+    reports = GenericRelation(Reports, related_query_name="nature_object")
     favourites = GenericRelation(Favourites)
+
+    class Meta:
+        ordering = ('-pk', )
 
     def __str__(self):
         return self.name
@@ -211,38 +238,53 @@ class Events(models.Model):
     event_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=1024)
-    status_id = models.ForeignKey(StatusesEvent, models.SET_NULL, null=True, related_name='events')  
+    status_id = models.ForeignKey(
+        StatusesEvent, models.SET_NULL, null=True, related_name="events"
+    )
     adress = models.CharField(max_length=256)
-    photo = models.ImageField(blank=True, null=True, upload_to='events/')  # This field type is a guess.
+    photo = models.ImageField(
+        blank=True, null=True, upload_to="events/"
+    )  # This field type is a guess.
     time_start = models.DateTimeField()
     time_of_close = models.DateTimeField()
-    reports = GenericRelation(Reports, related_query_name='events')
+    reports = GenericRelation(Reports, related_query_name="events")
     favourites = GenericRelation(Favourites)
-    nature_objects = models.ManyToManyField(NatureObjects, blank=True, related_name="events")
+    nature_objects = models.ManyToManyField(
+        NatureObjects, blank=True, related_name="events"
+    )
     routes = models.ManyToManyField(Routes, blank=True, related_name="events")
+
+    class Meta:
+        ordering = ('-pk', )
 
     def __str__(self):
         return self.name
 
 
 class Rates(models.Model):
-    rate_id = models.AutoField(primary_key=True)  
-    report_id = models.OneToOneField(Reports, models.CASCADE, related_name='rates')  
-    availability = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    beauty = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    purity = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    rate_id = models.AutoField(primary_key=True)
+    report_id = models.OneToOneField(Reports, models.CASCADE, related_name="rates")
+    availability = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    beauty = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    purity = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
 
 
 class Results(models.Model):
-    result_id = models.AutoField(primary_key=True)  
+    result_id = models.AutoField(primary_key=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    report_id = models.ForeignKey(Reports, models.CASCADE, related_name='results')
+    report_id = models.ForeignKey(Reports, models.CASCADE, related_name="results")
     amount = models.DecimalField(max_digits=5, decimal_places=2)
-    waste_id = models.ForeignKey(WasteTypes, models.CASCADE, related_name='results')
-    aproved = models.BooleanField(blank=True, null=True) 
+    waste_id = models.ForeignKey(WasteTypes, models.CASCADE, related_name="results")
+    aproved = models.BooleanField(blank=True, null=True)
 
 
-'''class WorkingHours(models.Model):
+"""class WorkingHours(models.Model):
     DAYS = (
         ('Mon', 'Понедельник'),
         ('Tue', 'Вторник'),
@@ -261,4 +303,4 @@ class Results(models.Model):
     point_id = models.ForeignKey(SortPoints, models.CASCADE)
 
     def __str__(self):
-        return self.day_of_week'''
+        return self.day_of_week"""
