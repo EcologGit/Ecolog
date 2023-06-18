@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'base',
 ]
 
 MIDDLEWARE = [
@@ -163,3 +164,8 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'base.pagination.DefaultProjectPagination',
+}
