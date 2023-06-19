@@ -20,9 +20,9 @@ class CustomUser(AbstractUser):
     )
     public_name = models.CharField(max_length=100)
     sex = models.CharField(choices=SEX, max_length=1)
-    birth_date = models.DateField(null=True)
-    locality = models.CharField(max_length=100, null=True)
-    photo = models.ImageField(null=True, upload_to="user/")
+    birth_date = models.DateField(null=True, blank=True)
+    locality = models.CharField(max_length=100, blank=True)
+    photo = models.ImageField(blank=True, upload_to="user/")
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -102,7 +102,7 @@ class WasteTypes(models.Model):
 
 class SortPoints(models.Model):
     point_id = models.AutoField(primary_key=True)
-    photo = models.ImageField(blank=True, null=True, upload_to="sort_points/")
+    photo = models.ImageField(blank=True, upload_to="sort_points/")
     name = models.CharField(max_length=100)
     admarea_id = models.ForeignKey(
         Admarea, models.SET_NULL, blank=True, null=True, related_name="sort_points"
@@ -126,7 +126,7 @@ class SortPoints(models.Model):
     latitude_n = models.DecimalField(max_digits=10, decimal_places=8, max_length=9)
     longitude_e = models.DecimalField(max_digits=11, decimal_places=8, max_length=9)
     organization_inn = models.ForeignKey(Organizations, models.CASCADE)
-    schedule = models.CharField(max_length=100, blank=True, null=True)
+    schedule = models.CharField(max_length=100, blank=True)
     favourites = GenericRelation(Favourites)
     wast_types = models.ManyToManyField(WasteTypes)
 
@@ -141,7 +141,7 @@ class Reports(models.Model):
     report_id = models.AutoField(primary_key=True)
     description = models.TextField(max_length=1024)
     photo = models.ImageField(
-        blank=True, null=True, upload_to="reports/"
+        blank=True, upload_to="reports/"
     )  # This field type is a guess.
     created_at = models.DateTimeField(auto_now_add=True)
     status_id_r = models.ForeignKey(
@@ -183,7 +183,7 @@ class Routes(models.Model):
     locality = models.CharField(max_length=256)
     price = models.IntegerField()
     photo = models.ImageField(
-        blank=True, null=True, upload_to="routes/"
+        blank=True, upload_to="routes/"
     )  # This field type is a guess.
     reports = GenericRelation(Reports, related_query_name="routes")
     favourites = GenericRelation(Favourites)
@@ -197,7 +197,7 @@ class NatureObjects(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=1024)
     category_obj_id = models.ForeignKey(
-        CategoryObjDict, models.SET_NULL, related_name="nature_objects", null=True
+        CategoryObjDict, models.PROTECT, related_name="nature_objects",
     )
     latitude_n = models.DecimalField(max_digits=10, decimal_places=8, max_length=9)
     longitude_e = models.DecimalField(max_digits=11, decimal_places=8, max_length=9)
@@ -222,8 +222,8 @@ class NatureObjects(models.Model):
         Organizations, models.SET_NULL, blank=True, null=True
     )
     has_parking = models.BooleanField(blank=True, null=True)
-    photo = models.ImageField(blank=True, null=True, upload_to="nature_objects/")
-    schedule = models.CharField(max_length=100, blank=True, null=True)
+    photo = models.ImageField(blank=True, upload_to="nature_objects/")
+    schedule = models.CharField(max_length=100, blank=True)
     reports = GenericRelation(Reports, related_query_name="nature_object")
     favourites = GenericRelation(Favourites)
 
@@ -239,11 +239,11 @@ class Events(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=1024)
     status_id = models.ForeignKey(
-        StatusesEvent, models.SET_NULL, null=True, related_name="events"
+        StatusesEvent, models.PROTECT, related_name="events"
     )
     adress = models.CharField(max_length=256)
     photo = models.ImageField(
-        blank=True, null=True, upload_to="events/"
+        blank=True, upload_to="events/"
     )  # This field type is a guess.
     time_start = models.DateTimeField()
     time_of_close = models.DateTimeField()
