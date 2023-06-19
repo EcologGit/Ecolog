@@ -48,13 +48,13 @@ from review.serializers import (
     OneNotFinishedEventSerializer,
 )
 from rest_framework import filters
-
+from review.filters import FilterOrderingForNatureObjectsAndRoutes, FilterOrderingForEventsAndSortPoint
 # Create your views here.
 
 
 class GetPlacesView(ListAPIView):
     serializer_class = ReadonlyNatureObjectsWithAvgRatesSerializer
-    filter_backends = (filters.SearchFilter, )
+    filter_backends = (FilterOrderingForNatureObjectsAndRoutes, filters.SearchFilter, )
     search_fields = ('name', )
 
     def get_queryset(self):
@@ -68,7 +68,7 @@ class GetInformationOnePlaceView(ObjectInfoAndReportStatisitcView):
 
 class GetRoutesView(ListAPIView):
     serializer_class = ReadOnlyRoutesWithAvgRatesSerializer
-    filter_backends = (filters.SearchFilter, )
+    filter_backends = (FilterOrderingForNatureObjectsAndRoutes, filters.SearchFilter, )
     search_fields = ('name', )
 
     def get_queryset(self):
@@ -83,7 +83,7 @@ class GetInformationOneRouteView(ObjectInfoAndReportStatisitcView):
 class GetEventsView(ListAPIView):
     serializer_class = ReadonlyEventsListSerializer
     queryset = get_events_list()
-    filter_backends = (filters.SearchFilter, )
+    filter_backends = (FilterOrderingForEventsAndSortPoint, filters.SearchFilter, )
     search_fields = ('name', )
 
 
@@ -121,7 +121,7 @@ class GetEventsRoutes(ListAPIView):
 class GetGarbagePointsView(ListAPIView):
     queryset = get_list_sort_points_with_waste_types()
     serializer_class = ReadOnlyListSortPointsSerializer
-    filter_backends = (filters.SearchFilter, )
+    filter_backends = (FilterOrderingForEventsAndSortPoint, filters.SearchFilter, )
     search_fields = ('name', )
 
 
