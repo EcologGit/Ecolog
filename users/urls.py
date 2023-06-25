@@ -7,4 +7,6 @@ urlpatterns = [
     path('api/browser_refresh/', CookieTokenRefreshView.as_view(), name='token_refresh'),
     path('api/mobile_token/', TokenObtainPairView.as_view()),
     path('api/mobile_refresh/', TokenRefreshView.as_view()),
+
+    path('api/create_user/', CreateProfileApi.as_view()),
 ]
