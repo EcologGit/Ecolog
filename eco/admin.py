@@ -81,4 +81,15 @@ class CategoryStatusesR(admin.ModelAdmin):
 class CategoryCategoryObjDic(admin.ModelAdmin):
     list_display = ('category_obj_id', 'name')
 
-admin.site.register(User, UserAdmin)
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("username", "password1", "password2", "sex", "public_name"),
+            },
+        ),
+    )
+
