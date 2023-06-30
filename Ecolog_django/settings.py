@@ -91,7 +91,7 @@ DATABASES = {
         'NAME': 'ecolog_db',
         'USER': 'pt_admin',
         'PASSWORD': 'e+ght31wkb_q',
-        'HOST': '81.163.30.36',
+        'HOST': 'pg_datebase',
         'PORT': '5432',
         # 'default': {
         #     'ENGINE': 'django.db.backends.sqlite3',
