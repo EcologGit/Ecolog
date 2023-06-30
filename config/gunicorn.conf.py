@@ -6,3 +6,4 @@ workers = multiprocessing.cpu_count() * 2 + 1
 reload = DEBUG
 timeout = 120
 max_requests = 1000
+worker_class = 'gevent'
