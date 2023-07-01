@@ -154,7 +154,8 @@ SIMPLE_JWT = {
 CORS_ORIGIN_WHITELIST = (
     #Убрать(надо разделить тестовый и прод сервера)
     'http://localhost:8080',
-    'http://81.163.30.36:8080',
+    'http://81.163.30.36:80',
+    'http://81.163.30.36:443',
 )
 
 CORS_ALLOW_METHODS = [
