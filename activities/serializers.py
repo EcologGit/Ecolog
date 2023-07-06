@@ -38,11 +38,12 @@ class ListReportsSerializer(serializers.ModelSerializer):
     rates = serializers.SerializerMethodField()
 
     def get_rates(self, obj):
-        return {
-            "availability": obj.rates.availability,
-            "beauty": obj.rates.beauty,
-            "purity": obj.rates.purity,
-        }
+        if hasattr(obj, "rates"):
+            return {
+                "availability": obj.rates.availability,
+                "beauty": obj.rates.beauty,
+                "purity": obj.rates.purity,
+            }
 
     def get_photo(self, object):
         return object.photo.url if object.photo else None

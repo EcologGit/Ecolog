@@ -111,6 +111,7 @@ def get_reports_statistic(object_with_reports: Model) -> dict:
             type=F("results__waste_id__name"),
             unit=F("results__waste_id__unit_of_waste"),
         )
+        .filter(type__isnull=False)
     )
     return reports_info
 
