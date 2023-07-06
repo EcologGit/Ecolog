@@ -140,16 +140,16 @@ def get_nearest_sort_points(object_type: Model, id: int, *args) -> dict:
         if object_type is NatureObjects:
             object = NatureObjects.objects.get(pk=id)
             coor_objects = (object.latitude_n, object.longitude_e)
-            sort_points = filter(
+            sort_points = tuple(filter(
                 lambda x: get_distance(coor_objects, (x.latitude_n, x.longitude_e))
                 < KM_DISTANCE_NEAR_POINT,
                 sort_points,
-            )
+            ))
         elif object_type is Routes:
             object = Routes.objects.get(pk=id)
             coor_objects_begin = (object.start_n, object.start_e)
             coor_objects_end = (object.end_n, object.end_e)
-            sort_points = filter(
+            sort_points = tuple(filter(
                 lambda x: get_distance(
                     coor_objects_begin, (x.latitude_n, x.longitude_e)
                 )
@@ -157,7 +157,7 @@ def get_nearest_sort_points(object_type: Model, id: int, *args) -> dict:
                 or get_distance(coor_objects_end, (x.latitude_n, x.longitude_e))
                 < KM_DISTANCE_NEAR_POINT,
                 sort_points,
-            )
+            ))
     except Exception:
         raise NotFound
 
@@ -173,11 +173,11 @@ def get_nearest_nature_objects_for_sort_points(
         "latitude_n", "longitude_e", *nature_objects_fields_output
     )
     nearest_nature_objects = list(
-        filter(
+        tuple(filter(
             lambda x: get_distance(sort_point_coord, (x.latitude_n, x.longitude_e))
             < KM_DISTANCE_NEAR_POINT,
             nature_objects,
-        )
+        ))
     )
     return nearest_nature_objects
 
@@ -190,7 +190,7 @@ def get_nearest_routes_for_sort_points(
     routes = Routes.objects.only(
         "start_n", "start_e", "end_e", "end_n", *routes_fields_output
     )
-    nearest_nature_objects = list(
+    nearest_nature_objects = filter(
         filter(
             lambda x: get_distance(sort_point_coord, (x.start_n, x.start_e))
             < KM_DISTANCE_NEAR_POINT
