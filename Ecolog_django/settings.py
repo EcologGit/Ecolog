@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'report.apps.ReportConfig',
     'base.apps.BaseConfig',
     'activities.apps.ActivitiesConfig',
+    "user_profiles.apps.UserProfilesConfig",
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
