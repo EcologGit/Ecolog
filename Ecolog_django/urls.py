@@ -18,14 +18,16 @@ from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    re_path(r'^chaining/', include('smart_selects.urls')),
-
-    path('review/', include('review.urls')),
-    path('users/', include('users.urls')),
-    path('report/', include('report.urls')),
-    path('activities/', include('activities.urls')),
+app_all_urlpatterns = [
+    path("admin/", admin.site.urls),
+    re_path(r"^chaining/", include("smart_selects.urls")),
+    path("review/", include("review.urls")),
+    path("users/", include("users.urls")),
+    path("report/", include("report.urls")),
+    path("activities/", include("activities.urls")),
     path("user_profiles/", include("user_profiles.urls")),
-    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns = [
+    path("django_api/", include(app_all_urlpatterns)),
+]
