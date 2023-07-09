@@ -10,7 +10,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
-import no_secrets
+from os import getenv
+from dotenv import load_dotenv
 
 # from secrets import *
 
@@ -19,14 +20,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
+load_dotenv(BASE_DIR / 'config//django_settings//.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = no_secrets.SECRET_KEY
+SECRET_KEY = getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['81.163.30.36']
+ALLOWED_HOSTS = [getenv("MAIN_HOST")]
 
 # Application definition
 
@@ -89,11 +91,11 @@ WSGI_APPLICATION = 'Ecolog_django.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ecolog_db',
-        'USER': 'pt_admin',
-        'PASSWORD': 'e+ght31wkb_q',
-        'HOST': 'pg_datebase',
-        'PORT': '5432',
+        "NAME": getenv("NAME_DB"),
+        "USER": getenv("USERNAME_DB"),
+        "PASSWORD": getenv("PASSWORD_DB"),
+        "HOST": getenv("HOST_DB"),
+        "PORT": getenv("PORT_DB"),
         # 'default': {
         #     'ENGINE': 'django.db.backends.sqlite3',
         #     'NAME': BASE_DIR / 'ecolog',
