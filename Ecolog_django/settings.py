@@ -26,30 +26,31 @@ load_dotenv(BASE_DIR / 'config//django_settings//.env')
 SECRET_KEY = getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if getenv("Debug").lower() == 'true' else False
 
 ALLOWED_HOSTS = [getenv("MAIN_HOST")]
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'eco.apps.EcoConfig',
-    'rest_framework',
-    'review.apps.ReviewConfig',
-    'users.apps.UsersConfig',
-    'report.apps.ReportConfig',
-    'base.apps.BaseConfig',
-    'activities.apps.ActivitiesConfig',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "eco.apps.EcoConfig",
+    "rest_framework",
+    "review.apps.ReviewConfig",
+    "users.apps.UsersConfig",
+    "report.apps.ReportConfig",
+    "activities.apps.ActivitiesConfig",
+    "base.apps.BaseConfig",
     "user_profiles.apps.UserProfilesConfig",
-    'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
-    'corsheaders',
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "corsheaders",
+    "debug_toolbar",
 ]
 
 #Убрал csrf-токен, при необходимости вернуть!
@@ -62,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'Ecolog_django.urls'
@@ -162,12 +164,18 @@ CORS_ALLOWED_ORIGINS = (
 )
 
 CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+INTERNAL_IPS = [
+    # ...
+    getenv("MAIN_HOST"),
+    # ...
 ]
 
 
