@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "activities.apps.ActivitiesConfig",
     "base.apps.BaseConfig",
     "user_profiles.apps.UserProfilesConfig",
+    "favorites.apps.FavoritesConfig",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",

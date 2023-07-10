@@ -26,6 +26,7 @@ app_all_urlpatterns = [
     path("report/", include("report.urls")),
     path("activities/", include("activities.urls")),
     path("user_profiles/", include("user_profiles.urls")),
+    path("favorites/", include("favorites.urls")),
     path("__debug__/", include("debug_toolbar.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
