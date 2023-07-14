@@ -1,4 +1,5 @@
 from django.db.models import Count, F
+from base.exception_handlers import get_number_or_validation_400
 from base.filters import OrderingFilterWithFunction
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.exceptions import NotFound
@@ -40,14 +41,11 @@ class ReportsCountFilter(BaseFilterBackend):
         "zero": lambda x: x.annotate(count_report=Count("reports")).filter(
             count_report=0
         ),
-        "zero": lambda x: x.annotate(count_report=Count("reports")).filter(
-            count_report=0
-        ),
         "no_more_than_20": lambda x: x.annotate(count_report=Count("reports")).filter(
             count_report__lte=20
         ),
-        "20_to_100": lambda x: x.annotate(count_report=Count("reports")).filter(
-            count_report__range=(20, 100)
+        "20_to_99": lambda x: x.annotate(count_report=Count("reports")).filter(
+            count_report__range=(20, 99)
         ),
         "more_than_100": lambda x: x.annotate(count_report=Count("reports")).filter(
             count_report__gt=100
@@ -62,4 +60,15 @@ class ReportsCountFilter(BaseFilterBackend):
                 raise NotFound(
                     f"Ключа {report_count} для параметра report_count не существует!"
                 )
+        return queryset
+
+
+class RouteLengthFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        if length_great_then := request.query_params.get("length_great_then", None):
+            length_great_then = get_number_or_validation_400(length_great_then, "length_great_then")
+            queryset = queryset.filter(length__gt=length_great_then)
+        if length_less_than := request.query_params.get("length_less_than", None):
+            length_less_than = get_number_or_validation_400(length_less_than, "length_less_than")
+            queryset = queryset.filter(length__lt=length_less_than)
         return queryset

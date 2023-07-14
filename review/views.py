@@ -53,6 +53,7 @@ from review.filters import (
     FilterOrderingForEventsAndSortPoint,
     ReportsCountFilter,
     AdmareaFilter,
+    RouteLengthFilter,
 )
 
 # Create your views here.
@@ -82,6 +83,8 @@ class GetRoutesView(ListAPIView):
     filter_backends = (
         FilterOrderingForNatureObjectsAndRoutes,
         filters.SearchFilter,
+        ReportsCountFilter,
+        RouteLengthFilter,
     )
     search_fields = ("name",)
 
