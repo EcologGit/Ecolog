@@ -83,6 +83,7 @@ class CategoryCategoryObjDic(admin.ModelAdmin):
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
+    list_display = ("id","username", "email")
     add_fieldsets = (
         (
             None,

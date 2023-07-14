@@ -83,6 +83,9 @@ class Favourites(models.Model):
             models.Index(fields=["content_type", "object_id"]),
         ]
 
+    class Meta:
+        ordering = ("-pk",)
+
 
 class StatusesReport(models.Model):
     status_id_r = models.AutoField(primary_key=True)
@@ -132,7 +135,7 @@ class SortPoints(models.Model):
     wast_types = models.ManyToManyField(WasteTypes)
 
     class Meta:
-        ordering = ('-pk', )
+        ordering = ("-pk",)
 
     def __str__(self):
         return self.name
@@ -187,7 +190,7 @@ class Routes(models.Model):
         blank=True, upload_to="routes/"
     )  # This field type is a guess.
     reports = GenericRelation(Reports, related_query_name="routes")
-    favourites = GenericRelation(Favourites)
+    favourites = GenericRelation(Favourites, related_query_name="route")
 
     def __str__(self):
         return self.name
@@ -198,7 +201,9 @@ class NatureObjects(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=1024)
     category_obj_id = models.ForeignKey(
-        CategoryObjDict, models.PROTECT, related_name="nature_objects",
+        CategoryObjDict,
+        models.PROTECT,
+        related_name="nature_objects",
     )
     latitude_n = models.DecimalField(max_digits=10, decimal_places=8, max_length=9)
     longitude_e = models.DecimalField(max_digits=11, decimal_places=8, max_length=9)
@@ -226,10 +231,10 @@ class NatureObjects(models.Model):
     photo = models.ImageField(blank=True, upload_to="nature_objects/")
     schedule = models.CharField(max_length=100, blank=True)
     reports = GenericRelation(Reports, related_query_name="nature_object")
-    favourites = GenericRelation(Favourites)
+    favourites = GenericRelation(Favourites, related_query_name="place")
 
     class Meta:
-        ordering = ('-pk', )
+        ordering = ("-pk",)
 
     def __str__(self):
         return self.name
@@ -239,9 +244,7 @@ class Events(models.Model):
     event_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=1024)
-    status_id = models.ForeignKey(
-        StatusesEvent, models.PROTECT, related_name="events"
-    )
+    status_id = models.ForeignKey(StatusesEvent, models.PROTECT, related_name="events")
     adress = models.CharField(max_length=256)
     photo = models.ImageField(
         blank=True, upload_to="events/"
@@ -256,7 +259,7 @@ class Events(models.Model):
     routes = models.ManyToManyField(Routes, blank=True, related_name="events")
 
     class Meta:
-        ordering = ('-pk', )
+        ordering = ("-pk",)
 
     def __str__(self):
         return self.name

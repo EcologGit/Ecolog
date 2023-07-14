@@ -12,34 +12,41 @@ class ContentTypeDict(ABC):
     def content_type_dict(self):
         pass
 
-    def get_model_or_not_found_error(self, object_type) -> Model:
+    @classmethod
+    def get_model_or_not_found_error(cls, object_type) -> Model:
         try:
-            model_object = self.content_type_dict[object_type]
+            model_object = cls.content_type_dict[object_type]
         except KeyError:
             raise NotFound(
-                f"В классе {self.__class__.__name__} значения с ключом {object_type} не существует!"
+                f"В классе {cls.__name__} значения с ключом {object_type} не существует!"
             )
 
         return model_object
-
-    def get_content_type_object_or_404(self, object_type):
-        obj_model = self.get_model_or_not_found_error(object_type)
+    
+    @classmethod
+    def get_content_type_object_or_404(cls, object_type):
+        obj_model = cls.get_model_or_not_found_error(object_type)
         return ContentType.objects.get_for_model(obj_model)
+    
+    @classmethod
+    def get_filtred_queryset(cls, queryset, object_type: str):
+        content_type = cls.get_content_type_object_or_404(object_type)
+        return queryset.filter(content_type=content_type)
 
 
 class ReportContentTypeDict(ContentTypeDict):
     content_type_dict = {
-        "place": NatureObjects,
-        "route": Routes,
-        "event": Events,
+        "places": NatureObjects,
+        "routes": Routes,
+        "events": Events,
     }
 
 
 class FavoriteContentTypeDict(ContentTypeDict):
     content_type_dict = {
-        "place": NatureObjects,
-        "route": Routes,
-        "event": Events,
+        "places": NatureObjects,
+        "routes": Routes,
+        "events": Events,
         "sort_points": SortPoints,
     }
 
