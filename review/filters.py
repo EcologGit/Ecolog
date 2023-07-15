@@ -1,5 +1,10 @@
 from django.db.models import Count, F
-from base.exception_handlers import get_number_or_validation_400
+from base.constants.statuses import EventStatus
+from base.exception_handlers import (
+    get_datetime_or_400_from_str,
+    get_number_or_validation_400,
+    get_val_from_dict_or_404,
+)
 from base.filters import OrderingFilterWithFunction
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.exceptions import NotFound
@@ -65,10 +70,41 @@ class ReportsCountFilter(BaseFilterBackend):
 
 class RouteLengthFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
-        if length_great_then := request.query_params.get("length_great_then", None):
-            length_great_then = get_number_or_validation_400(length_great_then, "length_great_then")
+        if length_great_then := request.query_params.get("length_greater_then", None):
+            length_great_then = get_number_or_validation_400(
+                length_great_then, "length_greater_then"
+            )
             queryset = queryset.filter(length__gt=length_great_then)
         if length_less_than := request.query_params.get("length_less_than", None):
-            length_less_than = get_number_or_validation_400(length_less_than, "length_less_than")
+            length_less_than = get_number_or_validation_400(
+                length_less_than, "length_less_than"
+            )
             queryset = queryset.filter(length__lt=length_less_than)
+        return queryset
+
+
+class EventTimeFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        if time_start := request.query_params.get("time_start", None):
+            time_start = get_datetime_or_400_from_str(time_start, "time_start")
+            print(time_start)
+            queryset = queryset.filter(time_start__gte=time_start)
+        if time_of_close := request.query_params.get("time_of_close", None):
+            time_of_close = get_datetime_or_400_from_str(time_of_close, "time_of_close")
+            queryset = queryset.filter(time_of_close__lte=time_of_close)
+        return queryset
+
+
+class EventStatusFilter(BaseFilterBackend):
+    statusess = {
+        "completed": EventStatus.COMPLETED,
+        "planned": EventStatus.PLANNED,
+        "cancelled": EventStatus.CANCELLED,
+        "active": EventStatus.ACTIVE,
+    }
+
+    def filter_queryset(self, request, queryset, view):
+        if status := request.query_params.get("status", None):
+            event_status = EventStatus.get_status_by_key_or_400(status)
+            queryset = queryset.filter(status_id__name=event_status)
         return queryset

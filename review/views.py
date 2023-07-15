@@ -49,6 +49,8 @@ from review.serializers import (
 )
 from rest_framework import filters
 from review.filters import (
+    EventStatusFilter,
+    EventTimeFilter,
     FilterOrderingForNatureObjectsAndRoutes,
     FilterOrderingForEventsAndSortPoint,
     ReportsCountFilter,
@@ -103,6 +105,8 @@ class GetEventsView(ListAPIView):
     filter_backends = (
         FilterOrderingForEventsAndSortPoint,
         filters.SearchFilter,
+        EventTimeFilter,
+        EventStatusFilter,
     )
     search_fields = ("name",)
 
