@@ -1,4 +1,4 @@
-from django.db.models import Count, F
+from django.db.models import Count, F, Subquery
 from base.constants.statuses import EventStatus
 from base.exception_handlers import (
     get_datetime_or_400_from_str,
@@ -8,7 +8,7 @@ from base.exception_handlers import (
 from base.filters import OrderingFilterWithFunction
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.exceptions import NotFound
-
+from eco.models import SortPoints
 
 def get_sum_avg_rates_fields(queryset, rates_in_queryset):
     return queryset.annotate(
@@ -107,4 +107,15 @@ class EventStatusFilter(BaseFilterBackend):
         if status := request.query_params.get("status", None):
             event_status = EventStatus.get_status_by_key_or_400(status)
             queryset = queryset.filter(status_id__name=event_status)
+        return queryset
+
+class WasteTypesFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        if wast_types := request.query_params.get("wast_types"):
+            union_queries = []
+            wast_types = wast_types.split(",")
+            for wast in wast_types:
+                union_queries.append(queryset.filter(wast_types__name=wast).values_list("pk"))
+            filtred_pks = union_queries[0].intersection(*union_queries[1:])
+            queryset = queryset.filter(pk__in=filtred_pks)
         return queryset

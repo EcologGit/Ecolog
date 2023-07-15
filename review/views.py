@@ -56,6 +56,7 @@ from review.filters import (
     ReportsCountFilter,
     AdmareaFilter,
     RouteLengthFilter,
+    WasteTypesFilter,
 )
 
 # Create your views here.
@@ -148,6 +149,8 @@ class GetGarbagePointsView(ListAPIView):
     filter_backends = (
         FilterOrderingForEventsAndSortPoint,
         filters.SearchFilter,
+        AdmareaFilter,
+        WasteTypesFilter,
     )
     search_fields = ("name",)
 
