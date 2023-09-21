@@ -1,3 +1,4 @@
+import datetime
 from rest_framework import serializers
 from eco.models import NatureObjects, Reports
 from eco.models import (
@@ -127,7 +128,7 @@ class EventListInfotSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Events
-        fields = ("pk", "photo", "name", "time_start")
+        fields = ("pk", "photo", "name", "time_start", "status_id")
 
 
 class OneNatureObjectSerializer(serializers.ModelSerializer):
@@ -318,3 +319,10 @@ class OneSortPointSerializer(serializers.ModelSerializer):
             "longitude_e",
             "wast_types",
         )
+
+
+class EventStatusDictSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = StatusesEvent
+        fields = '__all__'

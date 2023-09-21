@@ -24,8 +24,9 @@ from review.services.format import (
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from eco.models import NatureObjects, Routes, SortPoints
+from eco.models import NatureObjects, Routes, SortPoints, StatusesEvent
 from review.serializers import (
+    EventStatusDictSerializer,
     EventsRoutesSerializer,
     NearestNatureObjectsToSortPointSerializer,
     NearestRoutesToSortPointSerializer,
@@ -207,3 +208,8 @@ class GetNearestRoutesToSortPoint(ListAPIView):
         return get_nearest_routes_for_sort_points(
             self.kwargs["sort_point_id"], routes_fields_output=("pk", "name", "photo")
         )
+
+
+class GetEventStatusDictView(ListAPIView):
+    serializer_class = EventStatusDictSerializer
+    queryset = StatusesEvent.objects.all()
