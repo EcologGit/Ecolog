@@ -127,7 +127,7 @@ class EventListInfotSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Events
-        fields = ("photo", "name", "time_start")
+        fields = ("pk", "photo", "name", "time_start")
 
 
 class OneNatureObjectSerializer(serializers.ModelSerializer):
