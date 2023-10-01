@@ -215,7 +215,7 @@ def get_actual_events_for_object(object_type: Model, id: int) -> QuerySet:
     if object_type is NatureObjects:
         return get_events_actual().filter(nature_objects__pk=id).order_by('name')
     elif object_type is Routes:
-        return get_events_actual().filter(route_objects__pk=id).order_by('name')
+        return get_events_actual().filter(routes__pk=id).order_by('name')
 
 
 """def test_query():
