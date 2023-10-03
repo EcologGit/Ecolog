@@ -185,7 +185,13 @@ class NearestSortPointsSerialzier(serializers.ModelSerializer):
 
     class Meta:
         model = SortPoints
-        fields = ("pk", "name", "schedule", "photo")
+        fields = (
+            "pk",
+            "name",
+            "schedule",
+            "photo",
+            "adress",
+        )
 
 
 class NearestNatureObjectsToSortPointSerializer(serializers.ModelSerializer):
@@ -322,7 +328,6 @@ class OneSortPointSerializer(serializers.ModelSerializer):
 
 
 class EventStatusDictSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = StatusesEvent
-        fields = '__all__'
+        fields = "__all__"

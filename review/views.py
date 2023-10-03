@@ -185,7 +185,13 @@ class GetNearestSortPoint(ListAPIView):
     def get_queryset(self):
         model_object = get_model_or_not_found_error(self.kwargs["object_type"])
         queryset = get_nearest_sort_points(
-            model_object, self.kwargs["object_id"], "name", "pk", "schedule", "photo"
+            model_object,
+            self.kwargs["object_id"],
+            "name",
+            "pk",
+            "schedule",
+            "photo",
+            "adress",
         )
 
         return queryset
