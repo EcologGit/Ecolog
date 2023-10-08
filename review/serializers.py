@@ -171,7 +171,7 @@ class UserNameSerializer(serializers.ModelSerializer):
 class WastTypeNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = WasteTypes
-        fields = ("name", "pk",)
+        fields = ("name", "pk", "unit_of_waste",)
 
 class ResultsSerializer(serializers.ModelSerializer):
     class Meta:
