@@ -1,6 +1,6 @@
 import datetime
 from rest_framework import serializers
-from eco.models import NatureObjects, Reports
+from eco.models import NatureObjects, Reports, Results
 from eco.models import (
     Routes,
     StatusesEvent,
@@ -168,13 +168,28 @@ class UserNameSerializer(serializers.ModelSerializer):
         fields = ("public_name",)
 
 
+class WastTypeNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WasteTypes
+        fields = ("name", "pk",)
+
+class ResultsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Results
+        fields = (
+            "amount",
+            "waste_id",
+        )
+
+
 class ReportsForObjectSeriralizer(serializers.ModelSerializer):
     rates = ReportRatesSerializer()
     user_id = UserNameSerializer()
+    results = ResultsSerializer(many=True)
 
     class Meta:
         model = Reports
-        fields = ("description", "created_at", "rates", "user_id")
+        fields = ("description", "created_at", "rates", "user_id", "results",)
 
 
 class NearestSortPointsSerialzier(serializers.ModelSerializer):

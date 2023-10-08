@@ -32,4 +32,5 @@ urlpatterns = [
     path("sortPoints/", GetGarbagePointsView.as_view()),
     path("sortPoints/<int:id>/", GetOneGarbagePointView.as_view()),
     path("statuses-event-dict/", GetEventStatusDictView.as_view()),
+    path("statuses-waste-types-dict/", GetWasteTypesDictView.as_view()),
 ]
