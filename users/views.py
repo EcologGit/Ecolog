@@ -1,5 +1,6 @@
 # views.py
 from rest_framework_simplejwt.views import TokenRefreshView, TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.translation import gettext_lazy as _
 from .serializers import CookieTokenRefreshSerializer, CreateProfileUserSerializer
 from rest_framework.views import APIView
@@ -9,6 +10,10 @@ from rest_framework.response import Response
 
 class CookieTokenObtainPairView(TokenObtainPairView):
     def finalize_response(self, request, response, *args, **kwargs):
+        if response.data.get("refresh"):
+            response.data['id'] = RefreshToken(response.data.get("refresh")).payload.get('user_id')
+        else:
+            response.data['id'] = None
         if response.data.get("refresh"):
             cookie_max_age = 3600 * 24 * 14  # 14 days
             response.set_cookie(
