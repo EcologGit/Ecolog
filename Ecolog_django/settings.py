@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "smart_selects",
     "debug_toolbar",
+    "django_extensions",
 ]
 
 #Убрал csrf-токен, при необходимости вернуть!
@@ -159,11 +160,17 @@ SIMPLE_JWT = {
     "TOKEN_REFRESH_SERIALIZER":'users.serializers.CustomTokenRefreshSerializer',
 }
 
+SECURE_COOKIE = getenv('SECURE_COOKIE')
+
+#Небезопасно убрать!
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = (
     #Убрать(надо разделить тестовый и прод сервера)
     'http://localhost:8080',
     'http://81.163.30.36',
     'http://aurasolution.ru',
+    'https://localhost:8080',
 )
 
 CORS_ALLOW_METHODS = [
