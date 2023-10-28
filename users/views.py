@@ -16,14 +16,13 @@ class CookieTokenObtainPairView(TokenObtainPairView):
         else:
             response.data['id'] = None
         if response.data.get("refresh"):
-            print(SECURE_COOKIE.lower() == 'true')
             cookie_max_age = 3600 * 24 * 14  # 14 days
             response.set_cookie(
                 "refresh_token",
                 response.data["refresh"],
                 max_age=cookie_max_age,
                 httponly=True,
-                secure=SECURE_COOKIE.lower() == 'true',
+                secure=SECURE_COOKIE.lower() == 'true' if SECURE_COOKIE else False,
             )
             del response.data["refresh"]
         return super().finalize_response(request, response, *args, **kwargs)
@@ -42,6 +41,7 @@ class CookieTokenRefreshView(TokenRefreshView):
                 response.data["refresh"],
                 max_age=cookie_max_age,
                 httponly=True,
+                secure=SECURE_COOKIE.lower() == 'true' if SECURE_COOKIE else False,
             )
             del response.data["refresh"]
         return super().finalize_response(request, response, *args, **kwargs)
