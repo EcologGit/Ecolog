@@ -7,6 +7,7 @@ from .serializers import CookieTokenRefreshSerializer, CreateProfileUserSerializ
 from rest_framework.views import APIView
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser
 
 
 class CookieTokenObtainPairView(TokenObtainPairView):
@@ -56,4 +57,4 @@ class CreateProfileApi(APIView):
             serializer.save()
         else:
             raise APIException(serializer.errors)
-        return Response(serializer.validated_data)
+        return Response({'is_success': True})
