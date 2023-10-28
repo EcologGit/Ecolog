@@ -14,13 +14,7 @@ from report.serializers import (
 )
 from report.util import first_el_from_request_data
 from rest_framework.generics import ListAPIView
-from eco.models import (
-    WasteTypes,
-    SortPoints,
-    NatureObjects,
-    Routes,
-    Events
-)
+from eco.models import WasteTypes, SortPoints, NatureObjects, Routes, Events
 from report.services.db_query import get_report_by_pk_or_404
 
 
@@ -42,17 +36,16 @@ class CreateReportApi(APIView):
     def post(self, request, *args):
         data = self.prepare_data(request)
         serializer = CreateReportSerializer(data=data)
-        if not serializer.is_valid():
-            return Response(serializer.errors)
-        serializer.create(serializer.validated_data)
-        return Response()
+        serializer.is_valid(raise_exception=True)
+        report = serializer.create(serializer.validated_data)
+        return Response({"id": report.pk})
 
 
 class RetriveReportApi(APIView):
-
     def get(self, request, *args, **kwargs):
-        report = get_report_by_pk_or_404(kwargs['pk'])
+        report = get_report_by_pk_or_404(kwargs["pk"])
         return Response(DetailReportSerializer(report).data)
+
 
 class GetListSortPointsApi(ListAPIView):
     serializer_class = SearchListSortPointSerialzer
@@ -77,4 +70,3 @@ class GetListRoutesObjectsApi(ListAPIView):
 class GetListEventsObjectsApi(ListAPIView):
     serializer_class = SearchListEventsSerialzer
     queryset = Events.objects.all()
-

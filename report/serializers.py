@@ -42,11 +42,12 @@ class WasteTypesSerializer(serializers.ModelSerializer):
 
 
 class CreateResultsSerializer(serializers.ModelSerializer):
-    waste_id = WasteTypesSerializer()
-
     class Meta:
         model = Results
-        fields = ["amount", "waste_id"]
+        fields = (
+            "amount",
+            "waste_id",
+        )
 
 
 class CreateReportSerializer(serializers.ModelSerializer):
@@ -103,13 +104,10 @@ class CreateReportSerializer(serializers.ModelSerializer):
 
         # Create the related results instances
         for result_data in results_data:
-            waste_type_instance = WasteTypes.objects.get(
-                name=result_data["waste_id"]["name"]
-            )
             result_instance = Results.objects.create(
                 report_id=report_instance,
                 amount=result_data["amount"],
-                waste_id=waste_type_instance,
+                waste_id=result_data["waste_id"],
             )
 
         # Create the related rates instance
@@ -208,7 +206,7 @@ class DetailReportSerializer(serializers.ModelSerializer):
             "name": report_object.name,
             "locality": report_object.locality,
             "pk": report_object.pk,
-            "rates": rates_obj[0] if rates_obj else []
+            "rates": rates_obj[0] if rates_obj else [],
         }
         return info_obj
 
