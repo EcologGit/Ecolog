@@ -26,7 +26,7 @@ class CookieTokenObtainPairView(TokenObtainPairView):
                 max_age=cookie_max_age,
                 httponly=True,
                 secure=SECURE_COOKIE.lower() == 'true' if SECURE_COOKIE else False,
-                samesite='None' if SECURE_COOKIE.lower() == 'true' else None,
+                samesite='None' if (SECURE_COOKIE and SECURE_COOKIE.lower() == 'true') else None,
             )
             del response.data["refresh"]
         return super().finalize_response(request, response, *args, **kwargs)
@@ -46,7 +46,7 @@ class CookieTokenRefreshView(TokenRefreshView):
                 max_age=cookie_max_age,
                 httponly=True,
                 secure=SECURE_COOKIE.lower() == 'true' if SECURE_COOKIE else False,
-                samesite='None' if SECURE_COOKIE.lower() == 'true' else None,
+                samesite='None' if (SECURE_COOKIE and SECURE_COOKIE.lower() == 'true') else None,
             )
             del response.data["refresh"]
         return super().finalize_response(request, response, *args, **kwargs)
