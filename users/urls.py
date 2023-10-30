@@ -9,4 +9,5 @@ urlpatterns = [
     path('api/mobile_refresh/', TokenRefreshView.as_view()),
 
     path('api/create_user/', CreateProfileApi.as_view()),
+    path('api/logout-with-cookies', LogoutWithCookieApi.as_view()),
 ]
