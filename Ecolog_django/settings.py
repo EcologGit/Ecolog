@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "smart_selects",
     "debug_toolbar",
+    "django_extensions",
+    "sslserver",
 ]
 
 #Убрал csrf-токен, при необходимости вернуть!
