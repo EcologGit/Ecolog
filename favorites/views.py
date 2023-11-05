@@ -15,12 +15,15 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.exceptions import NotFound
 
-from favorites.services.selectors import get_user_favorites_filter_by_content_type
+from favorites.services.selectors import (
+    get_user_favorites_filter_by_content_type,
+    get_favorite_or_404,
+)
 
 # Create your views here.
 
 
-class CreateFavoriteApi(APIView):
+class CreateDeleteFavoriteApi(APIView):
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
 
@@ -39,6 +42,12 @@ class CreateFavoriteApi(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+    def delete(self, request, *args, **kwargs):
+        get_favorite_or_404(
+            request.user.id, kwargs.get("object_type"), kwargs.get("object_id")
+        ).delete()
+        return Response()
 
 
 class GetPlacesFavoritesApi(ListAPIView):
