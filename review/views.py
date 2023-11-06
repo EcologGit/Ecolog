@@ -1,11 +1,9 @@
-from favorites.services.selectors import get_is_favourite_for_queryset
 from review.services.db_query import (
     get_nature_objects_with_avg_rates,
     get_events_list,
     get_nearest_nature_objects_for_sort_points,
     get_nearest_routes_for_sort_points,
     get_one_event,
-    get_one_object_with_rates_by_id_or_not_found_error,
     get_rates_statistic,
     get_reports_statistic,
 )
@@ -35,7 +33,6 @@ from review.serializers import (
     ReadonlyEventsListSerializer,
     ReadOnlyListSortPointsSerializer,
     WastTypeNameSerializer,
-    WastTypePointNameSerializer,
 )
 from review.serializers import (
     ReadonlyNatureObjectsWithAvgRatesSerializer,
@@ -62,11 +59,12 @@ from review.filters import (
     RouteLengthFilter,
     WasteTypesFilter,
 )
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from review.services.mixins import ObjectsMixin
+
 # Create your views here.
 
 
-class GetPlacesView(ListAPIView):
+class GetPlacesView(ObjectsMixin, ListAPIView):
     serializer_class = ReadonlyNatureObjectsWithAvgRatesSerializer
     filter_backends = (
         FilterOrderingForNatureObjectsAndRoutes,
@@ -75,17 +73,8 @@ class GetPlacesView(ListAPIView):
         AdmareaFilter,
     )
     search_fields = ("name",)
-    authentication_classes = (JWTAuthentication,)
-
-    def get_queryset(self):
-        user = self.request.user
-        base_queryset = get_nature_objects_with_avg_rates()
-        return (
-            base_queryset
-            if user.is_anonymous
-            else get_is_favourite_for_queryset(base_queryset, user, "places")
-        )
-
+    base_queryset = get_nature_objects_with_avg_rates()
+    object_type = "places"
 
 
 class GetInformationOnePlaceView(ObjectInfoAndReportStatisitcView):
@@ -93,7 +82,7 @@ class GetInformationOnePlaceView(ObjectInfoAndReportStatisitcView):
     model = NatureObjects
 
 
-class GetRoutesView(ListAPIView):
+class GetRoutesView(ObjectsMixin, ListAPIView):
     serializer_class = ReadOnlyRoutesWithAvgRatesSerializer
     filter_backends = (
         FilterOrderingForNatureObjectsAndRoutes,
@@ -102,9 +91,8 @@ class GetRoutesView(ListAPIView):
         RouteLengthFilter,
     )
     search_fields = ("name",)
-
-    def get_queryset(self):
-        return get_routes_with_avg_rates()
+    base_queryset = get_routes_with_avg_rates()
+    object_type = "routes"
 
 
 class GetInformationOneRouteView(ObjectInfoAndReportStatisitcView):
@@ -112,9 +100,8 @@ class GetInformationOneRouteView(ObjectInfoAndReportStatisitcView):
     serializer_class = OneRouteSerializer
 
 
-class GetEventsView(ListAPIView):
+class GetEventsView(ObjectsMixin, ListAPIView):
     serializer_class = ReadonlyEventsListSerializer
-    queryset = get_events_list()
     filter_backends = (
         FilterOrderingForEventsAndSortPoint,
         filters.SearchFilter,
@@ -122,6 +109,8 @@ class GetEventsView(ListAPIView):
         EventStatusFilter,
     )
     search_fields = ("name",)
+    base_queryset = get_events_list()
+    object_type = "events"
 
 
 class GetOneEventView(APIView):
@@ -155,8 +144,7 @@ class GetEventsRoutes(ListAPIView):
         return Routes.objects.filter(events__pk=event_id)
 
 
-class GetGarbagePointsView(ListAPIView):
-    queryset = get_list_sort_points_with_waste_types()
+class GetGarbagePointsView(ObjectsMixin, ListAPIView):
     serializer_class = ReadOnlyListSortPointsSerializer
     filter_backends = (
         FilterOrderingForEventsAndSortPoint,
@@ -165,6 +153,8 @@ class GetGarbagePointsView(ListAPIView):
         WasteTypesFilter,
     )
     search_fields = ("name",)
+    base_queryset = get_list_sort_points_with_waste_types()
+    object_type = "sort_points"
 
 
 class GetOneGarbagePointView(RetrieveAPIView):

@@ -55,6 +55,7 @@ class ReadonlyEventsListSerializer(serializers.ModelSerializer):
     datetime_start = serializers.DateTimeField()
     status = serializers.CharField(max_length=64)
     photo = serializers.SerializerMethodField()
+    is_favourite = serializers.BooleanField(allow_null=True, required=True)
 
     def get_photo(self, obj):
         return obj.photo.url if obj.photo else None
@@ -69,6 +70,7 @@ class ReadonlyEventsListSerializer(serializers.ModelSerializer):
             "datetime_start",
             "status",
             "adress",
+            "is_favourite",
         ]
 
 
@@ -77,6 +79,7 @@ class ReadOnlyRoutesWithAvgRatesSerializer(serializers.ModelSerializer):
     avg_beauty = serializers.FloatField()
     avg_purity = serializers.FloatField()
     photo = serializers.SerializerMethodField()
+    is_favourite = serializers.BooleanField(allow_null=True, required=False)
 
     def get_photo(self, obj):
         return obj.photo.url if obj.photo else None
@@ -93,6 +96,7 @@ class ReadOnlyRoutesWithAvgRatesSerializer(serializers.ModelSerializer):
             "avg_beauty",
             "avg_purity",
             "photo",
+            "is_favourite",
         ]
 
 
@@ -105,6 +109,7 @@ class WastTypePointNameSerializer(serializers.ModelSerializer):
 class ReadOnlyListSortPointsSerializer(serializers.ModelSerializer):
     wast_types = WastTypePointNameSerializer(many=True)
     photo = serializers.SerializerMethodField()
+    is_favourite = serializers.BooleanField(allow_null=True, required=True)
 
     def get_photo(self, obj):
         return obj.photo.url if obj.photo else None
@@ -119,6 +124,7 @@ class ReadOnlyListSortPointsSerializer(serializers.ModelSerializer):
             "description",
             "wast_types",
             "photo",
+            "is_favourite",
         ]
 
 
@@ -173,7 +179,12 @@ class UserNameSerializer(serializers.ModelSerializer):
 class WastTypeNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = WasteTypes
-        fields = ("name", "pk", "unit_of_waste",)
+        fields = (
+            "name",
+            "pk",
+            "unit_of_waste",
+        )
+
 
 class ResultsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -191,7 +202,13 @@ class ReportsForObjectSeriralizer(serializers.ModelSerializer):
 
     class Meta:
         model = Reports
-        fields = ("description", "created_at", "rates", "user_id", "results",)
+        fields = (
+            "description",
+            "created_at",
+            "rates",
+            "user_id",
+            "results",
+        )
 
 
 class NearestSortPointsSerialzier(serializers.ModelSerializer):

@@ -22,3 +22,11 @@ def get_is_favourite_for_queryset(queryset: QuerySet, user, object_type) -> Quer
         object_id=OuterRef("pk")
     )
     return queryset.annotate(is_favourite=Exists(subquery))
+
+
+def get_is_favourite_for_queryset_if_user_auth(base_queryset, user, object_type):
+    return (
+        base_queryset
+        if user.is_anonymous
+        else get_is_favourite_for_queryset(base_queryset, user, object_type)
+    )

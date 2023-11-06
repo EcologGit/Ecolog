@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 from rest_framework.exceptions import NotFound
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Model
-from django.shortcuts import get_object_or_404
 
 
 class ContentTypeDict(ABC):
@@ -22,14 +21,17 @@ class ContentTypeDict(ABC):
             )
 
         return model_object
-    
+
     @classmethod
     def get_content_type_object_or_404(cls, object_type):
         obj_model = cls.get_model_or_not_found_error(object_type)
         return ContentType.objects.get_for_model(obj_model)
-    
+
     @classmethod
     def get_filtred_queryset(cls, queryset, object_type: str):
+        """
+        Возвращает queryset отфильтрованный по object_type, если он существует, иначе выдаёт 404 ошибку
+        """
         content_type = cls.get_content_type_object_or_404(object_type)
         return queryset.filter(content_type=content_type)
 
