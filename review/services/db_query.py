@@ -118,7 +118,7 @@ def get_reports_statistic(object_with_reports: Model) -> dict:
 
 def get_rates_statistic(object_with_reports) -> dict:
     """
-    Возвращает оценки у модели, в которой есть отчёты, иначе 
+    Возвращает оценки у модели, в которой есть отчёты, иначе
     возвращает словарь с None значениями
     """
     try:
@@ -140,24 +140,28 @@ def get_nearest_sort_points(object_type: Model, id: int, *args) -> dict:
         if object_type is NatureObjects:
             object = NatureObjects.objects.get(pk=id)
             coor_objects = (object.latitude_n, object.longitude_e)
-            sort_points = tuple(filter(
-                lambda x: get_distance(coor_objects, (x.latitude_n, x.longitude_e))
-                < KM_DISTANCE_NEAR_POINT,
-                sort_points,
-            ))
+            sort_points = tuple(
+                filter(
+                    lambda x: get_distance(coor_objects, (x.latitude_n, x.longitude_e))
+                    < KM_DISTANCE_NEAR_POINT,
+                    sort_points,
+                )
+            )
         elif object_type is Routes:
             object = Routes.objects.get(pk=id)
             coor_objects_begin = (object.start_n, object.start_e)
             coor_objects_end = (object.end_n, object.end_e)
-            sort_points = tuple(filter(
-                lambda x: get_distance(
-                    coor_objects_begin, (x.latitude_n, x.longitude_e)
+            sort_points = tuple(
+                filter(
+                    lambda x: get_distance(
+                        coor_objects_begin, (x.latitude_n, x.longitude_e)
+                    )
+                    < KM_DISTANCE_NEAR_POINT
+                    or get_distance(coor_objects_end, (x.latitude_n, x.longitude_e))
+                    < KM_DISTANCE_NEAR_POINT,
+                    sort_points,
                 )
-                < KM_DISTANCE_NEAR_POINT
-                or get_distance(coor_objects_end, (x.latitude_n, x.longitude_e))
-                < KM_DISTANCE_NEAR_POINT,
-                sort_points,
-            ))
+            )
     except Exception:
         raise NotFound
 
@@ -173,11 +177,13 @@ def get_nearest_nature_objects_for_sort_points(
         "latitude_n", "longitude_e", *nature_objects_fields_output
     )
     nearest_nature_objects = list(
-        tuple(filter(
-            lambda x: get_distance(sort_point_coord, (x.latitude_n, x.longitude_e))
-            < KM_DISTANCE_NEAR_POINT,
-            nature_objects,
-        ))
+        tuple(
+            filter(
+                lambda x: get_distance(sort_point_coord, (x.latitude_n, x.longitude_e))
+                < KM_DISTANCE_NEAR_POINT,
+                nature_objects,
+            )
+        )
     )
     return nearest_nature_objects
 
@@ -213,9 +219,9 @@ def get_reports_for_object(object_type: Model, id: int) -> QuerySet:
 
 def get_actual_events_for_object(object_type: Model, id: int) -> QuerySet:
     if object_type is NatureObjects:
-        return get_events_actual().filter(nature_objects__pk=id).order_by('name')
+        return get_events_actual().filter(nature_objects__pk=id).order_by("name")
     elif object_type is Routes:
-        return get_events_actual().filter(routes__pk=id).order_by('name')
+        return get_events_actual().filter(routes__pk=id).order_by("name")
 
 
 """def test_query():

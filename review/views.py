@@ -1,3 +1,4 @@
+from favorites.services.selectors import get_is_favourite_for_queryset
 from review.services.db_query import (
     get_nature_objects_with_avg_rates,
     get_events_list,
@@ -61,7 +62,7 @@ from review.filters import (
     RouteLengthFilter,
     WasteTypesFilter,
 )
-
+from rest_framework_simplejwt.authentication import JWTAuthentication
 # Create your views here.
 
 
@@ -74,9 +75,17 @@ class GetPlacesView(ListAPIView):
         AdmareaFilter,
     )
     search_fields = ("name",)
+    authentication_classes = (JWTAuthentication,)
 
     def get_queryset(self):
-        return get_nature_objects_with_avg_rates()
+        user = self.request.user
+        base_queryset = get_nature_objects_with_avg_rates()
+        return (
+            base_queryset
+            if user.is_anonymous
+            else get_is_favourite_for_queryset(base_queryset, user, "places")
+        )
+
 
 
 class GetInformationOnePlaceView(ObjectInfoAndReportStatisitcView):

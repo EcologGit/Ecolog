@@ -19,6 +19,7 @@ class ReadonlyNatureObjectsWithAvgRatesSerializer(serializers.ModelSerializer):
     avg_beauty = serializers.FloatField()
     avg_purity = serializers.FloatField()
     photo = serializers.SerializerMethodField()
+    is_favourite = serializers.BooleanField(allow_null=True, required=True)
 
     def get_photo(self, obj):
         return obj.photo.url if obj.photo else None
@@ -34,6 +35,7 @@ class ReadonlyNatureObjectsWithAvgRatesSerializer(serializers.ModelSerializer):
             "avg_availability",
             "avg_beauty",
             "avg_purity",
+            "is_favourite",
         )
 
 

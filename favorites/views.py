@@ -45,7 +45,7 @@ class CreateDeleteFavoriteApi(APIView):
 
     def delete(self, request, *args, **kwargs):
         get_favorite_or_404(
-            request.user.id, kwargs.get("object_type"), kwargs.get("object_id")
+            request.user, kwargs.get("object_type"), kwargs.get("object_id")
         ).delete()
         return Response()
 
@@ -69,5 +69,5 @@ class GetPlacesFavoritesApi(ListAPIView):
 
     def get_queryset(self):
         return get_user_favorites_filter_by_content_type(
-            self.kwargs["user_id"], self.kwargs["object_type"]
+            self.request.user, self.kwargs["object_type"]
         )
