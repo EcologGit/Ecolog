@@ -22,7 +22,7 @@ class CustomUser(AbstractUser):
     sex = models.CharField(choices=SEX, max_length=1)
     birth_date = models.DateField(null=True, blank=True)
     locality = models.CharField(max_length=100, blank=True)
-    photo = models.ImageField(blank=True, upload_to="user/")
+    photo = models.ImageField(blank=True, upload_to="user/", max_length=3000)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -106,7 +106,7 @@ class WasteTypes(models.Model):
 
 class SortPoints(models.Model):
     point_id = models.AutoField(primary_key=True)
-    photo = models.ImageField(blank=True, upload_to="sort_points/")
+    photo = models.ImageField(blank=True, upload_to="sort_points/", max_length=3000)
     name = models.CharField(max_length=100)
     admarea_id = models.ForeignKey(
         Admarea, models.SET_NULL, blank=True, null=True, related_name="sort_points"
@@ -145,7 +145,7 @@ class Reports(models.Model):
     report_id = models.AutoField(primary_key=True)
     description = models.TextField(max_length=1024)
     photo = models.ImageField(
-        blank=True, upload_to="reports/"
+        blank=True, upload_to="reports/", max_length=3000
     )  # This field type is a guess.
     created_at = models.DateTimeField(auto_now_add=True)
     status_id_r = models.ForeignKey(
@@ -187,7 +187,7 @@ class Routes(models.Model):
     locality = models.CharField(max_length=256)
     price = models.IntegerField()
     photo = models.ImageField(
-        blank=True, upload_to="routes/"
+        blank=True, upload_to="routes/", max_length=3000
     )  # This field type is a guess.
     reports = GenericRelation(Reports, related_query_name="routes")
     favourites = GenericRelation(Favourites, related_query_name="route")
@@ -228,7 +228,7 @@ class NatureObjects(models.Model):
         Organizations, models.SET_NULL, blank=True, null=True
     )
     has_parking = models.BooleanField(blank=True, null=True)
-    photo = models.ImageField(blank=True, upload_to="nature_objects/")
+    photo = models.ImageField(blank=True, upload_to="nature_objects/", max_length=3000)
     schedule = models.CharField(max_length=100, blank=True)
     reports = GenericRelation(Reports, related_query_name="nature_object")
     favourites = GenericRelation(Favourites, related_query_name="place")
@@ -247,7 +247,7 @@ class Events(models.Model):
     status_id = models.ForeignKey(StatusesEvent, models.PROTECT, related_name="events")
     adress = models.CharField(max_length=256)
     photo = models.ImageField(
-        blank=True, upload_to="events/"
+        blank=True, upload_to="events/", max_length=3000
     )  # This field type is a guess.
     time_start = models.DateTimeField()
     time_of_close = models.DateTimeField()
