@@ -2,7 +2,7 @@
 Шаги установки:
 1)Установить библиотеки из requirements.py
 
-2)Установить в config/django/settings файл .env со следующими переменными:
+2)Установить в config/django_settings файл .env со следующими переменными:
 SECRET_KEY
 NAME_DB
 USERNAME_DB
