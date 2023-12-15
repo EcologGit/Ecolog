@@ -1,9 +1,14 @@
+from favorites.services.selectors import (
+    get_favorite_or_404,
+    get_is_favorite_exists_for_user,
+)
 from review.services.db_query import (
     get_nature_objects_with_avg_rates,
     get_events_list,
     get_nearest_nature_objects_for_sort_points,
     get_nearest_routes_for_sort_points,
     get_one_event,
+    get_one_sort_point,
     get_rates_statistic,
     get_reports_statistic,
 )
@@ -60,6 +65,7 @@ from review.filters import (
     WasteTypesFilter,
 )
 from review.services.mixins import ObjectsMixin
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Create your views here.
 
@@ -80,6 +86,7 @@ class GetPlacesView(ObjectsMixin, ListAPIView):
 class GetInformationOnePlaceView(ObjectInfoAndReportStatisitcView):
     serializer_class = OneNatureObjectSerializer
     model = NatureObjects
+    object_type = "places"
 
 
 class GetRoutesView(ObjectsMixin, ListAPIView):
@@ -98,6 +105,7 @@ class GetRoutesView(ObjectsMixin, ListAPIView):
 class GetInformationOneRouteView(ObjectInfoAndReportStatisitcView):
     model = Routes
     serializer_class = OneRouteSerializer
+    object_type = "routes"
 
 
 class GetEventsView(ObjectsMixin, ListAPIView):
@@ -111,20 +119,35 @@ class GetEventsView(ObjectsMixin, ListAPIView):
     search_fields = ("name",)
     base_queryset = get_events_list()
     object_type = "events"
+    authentication_classes = (JWTAuthentication,)
 
 
 class GetOneEventView(APIView):
+    authentication_classes = (JWTAuthentication,)
+
     def get(self, request, *args, **kwargs):
         event_id = kwargs["id"]
         event = get_one_event(event_id)
         data_event = OneNotFinishedEventSerializer(event).data
         if event.status_id.name != "Завершено":
-            return Response(data_event)
+            return Response(
+                data_event
+                | {
+                    "is_favorite": get_is_favorite_exists_for_user(
+                        request.user, "events", kwargs.get("id")
+                    )
+                }
+            )
         else:
             return Response(
                 data_event
                 | get_rates_statistic(event)
                 | {"reports_statistic": get_reports_statistic(event)}
+                | {
+                    "is_favorite": get_is_favorite_exists_for_user(
+                        request.user, "events", kwargs.get("id")
+                    )
+                }
             )
 
 
@@ -158,10 +181,23 @@ class GetGarbagePointsView(ObjectsMixin, ListAPIView):
 
 
 class GetOneGarbagePointView(RetrieveAPIView):
-    queryset = SortPoints.objects.prefetch_related("wast_types")
     lookup_field = "pk"
     lookup_url_kwarg = "id"
     serializer_class = OneSortPointSerializer
+    authentication_classes = (JWTAuthentication,)
+
+    def get(self, request, *args, **kwargs):
+        sort_point_id = kwargs["id"]
+        sort_point = get_one_sort_point(sort_point_id)
+        data_sort_point = OneSortPointSerializer(sort_point).data
+        return Response(
+            data_sort_point
+            | {
+                "is_favorite": get_is_favorite_exists_for_user(
+                    request.user, "sort_points", kwargs.get("id")
+                )
+            }
+        )
 
 
 class GetReportsForObjectView(ListAPIView):

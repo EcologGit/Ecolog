@@ -96,6 +96,13 @@ def get_one_event(id: int):
     )
     return event
 
+def get_one_sort_point(id: int):
+    event = get_object_or_404(
+        SortPoints.objects.prefetch_related("wast_types"),
+        pk=id,
+    )
+    return event
+
 
 def get_events_actual() -> QuerySet:
     return Events.objects.filter(time_of_close__gt=datetime.now())

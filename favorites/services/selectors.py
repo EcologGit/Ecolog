@@ -30,3 +30,13 @@ def get_is_favourite_for_queryset_if_user_auth(base_queryset, user, object_type)
         if user.is_anonymous
         else get_is_favourite_for_queryset(base_queryset, user, object_type)
     )
+
+
+def get_is_favorite_exists_for_user(user, object_type, object_id):
+    return (
+        False
+        if user.is_anonymous
+        else get_user_favorites_filter_by_content_type(user, object_type)
+        .filter(object_id=object_id)
+        .exists()
+    )
