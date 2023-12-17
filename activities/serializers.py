@@ -13,7 +13,6 @@ class WasteTypesReportSerializer(serializers.ModelSerializer):
 
 
 class ResultsReportSerializer(serializers.ModelSerializer):
-    waste_id = WasteTypesReportSerializer()
 
     class Meta:
         model = Results
@@ -55,6 +54,7 @@ class ListReportsSerializer(serializers.ModelSerializer):
             if hasattr(obj.content_object, "locality")
             else None,
             "type_obj": self.type_obj_dt[obj.content_type],
+            "sort_point": obj.point_id.name if obj.point_id else ''
         }
 
     class Meta:
