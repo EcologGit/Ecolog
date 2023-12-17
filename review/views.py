@@ -28,7 +28,7 @@ from review.services.format import (
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from eco.models import NatureObjects, Routes, SortPoints, StatusesEvent, WasteTypes
+from eco.models import NatureObjects, Routes, Reports, StatusesEvent, WasteTypes
 from review.serializers import (
     EventStatusDictSerializer,
     EventsRoutesSerializer,
@@ -197,6 +197,7 @@ class GetOneGarbagePointView(RetrieveAPIView):
                     request.user, "sort_points", kwargs.get("id")
                 )
             }
+            | {"reports_statistic": get_reports_statistic(sort_point)}
         )
 
 
@@ -204,7 +205,10 @@ class GetReportsForObjectView(ListAPIView):
     serializer_class = ReportsForObjectSeriralizer
 
     def get_queryset(self):
-        model_object = get_model_or_not_found_error(self.kwargs["object_type"])
+        object_type = self.kwargs["object_type"]
+        if object_type == "sort_point":
+            return Reports.objects.filter(point_id__pk=self.kwargs["object_id"])
+        model_object = get_model_or_not_found_error(object_type)
         return get_reports_for_object(model_object, self.kwargs["object_id"])
 
 

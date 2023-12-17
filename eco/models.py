@@ -156,7 +156,11 @@ class Reports(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
     point_id = models.ForeignKey(
-        SortPoints, on_delete=models.SET_NULL, null=True, blank=True
+        SortPoints,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="reports",
     )
 
     class Meta:
