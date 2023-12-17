@@ -54,7 +54,7 @@ class ListReportsSerializer(serializers.ModelSerializer):
             "locality": obj.content_object.locality
             if hasattr(obj.content_object, "locality")
             else None,
-            "type_obj": self.type_obj_dt[obj.content_type]
+            "type_obj": self.type_obj_dt[obj.content_type],
         }
 
     class Meta:
@@ -69,3 +69,9 @@ class ListReportsSerializer(serializers.ModelSerializer):
             "obj",
             "rates",
         )
+
+
+class GeneralStatisticResultSerializer(serializers.Serializer):
+    amount = serializers.FloatField()
+    type = serializers.CharField()
+    unit = serializers.CharField()
