@@ -39,7 +39,7 @@ def get_activity_statistic():
 
 def gathered_waste_statistic():
     query = Results.objects.values("waste_id").annotate(
-        amount=Sum("amount"),
+        sum_amount=Sum("amount"),
         type=F("waste_id__name"),
         unit=F("waste_id__unit_of_waste"),
     )

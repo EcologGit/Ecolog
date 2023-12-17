@@ -36,6 +36,10 @@ def get_different_object_count_in_reports(user):
     sort_point_count = 0
     result = {}
 
+    result["place"] = 0
+    result["route"] = 0
+    result["event"] = 0
+
     for obj_data in query:
         content_type = obj_data["content_type"]
         model = ContentType.objects.get_for_id(content_type).model_class()
@@ -44,3 +48,16 @@ def get_different_object_count_in_reports(user):
         result[type_obj] = obj_data["object_count"]
     result["sort_points"] = sort_point_count
     return result
+
+
+def get_activity_statistic_dict(activity_queryset):
+    activity_statistics = {}
+    if not activity_queryset:
+        activity_statistics['rates_count'] = 0
+        activity_statistics['photo_count'] = 0
+        activity_statistics['report_count'] = 0
+    else:
+        activity_statistics['rates_count'] = activity_queryset[0].get('rates_count')
+        activity_statistics['photo_count'] = activity_queryset[0].get('photo_count')
+        activity_statistics['report_count'] = activity_queryset[0].get('report_count')
+    return activity_statistics

@@ -72,6 +72,6 @@ class ListReportsSerializer(serializers.ModelSerializer):
 
 
 class GeneralStatisticResultSerializer(serializers.Serializer):
-    amount = serializers.FloatField()
+    sum_amount = serializers.FloatField()
     type = serializers.CharField()
     unit = serializers.CharField()

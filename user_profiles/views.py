@@ -1,5 +1,8 @@
 from django.shortcuts import get_object_or_404
-from activities.serializers import ListReportsSerializer
+from activities.serializers import (
+    GeneralStatisticResultSerializer,
+    ListReportsSerializer,
+)
 from base.shortcuts import get_user_or_404
 from review.services.db_query import get_reports_statistic
 from user_profiles.serializers import UserProfileInfoSerializer
@@ -8,8 +11,16 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import get_user_model
-from user_profiles.services.other import get_different_object_count_in_reports, get_usual_user_or_not_found
-from user_profiles.services.selectors import get_annotate_by_content_type_and_point_id, get_user_reports, get_activity_statistics
+from user_profiles.services.other import (
+    get_activity_statistic_dict,
+    get_different_object_count_in_reports,
+    get_usual_user_or_not_found,
+)
+from user_profiles.services.selectors import (
+    get_annotate_by_content_type_and_point_id,
+    get_user_reports,
+    get_activity_statistics,
+)
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
@@ -50,11 +61,15 @@ class GetUserStatistic(RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
-        user = get_user_or_404(pk=self.kwargs['user_pk'])
-        activity_statistics =  get_activity_statistics(user)
-        data = {
-            "gathered_wastes": get_reports_statistic(user),
-            "objects_counter": get_different_object_count_in_reports(user),
-            "activity_counter": activity_statistics[0] if activity_statistics else None
-        }
+        user = get_user_or_404(pk=self.kwargs["user_pk"])
+        activity_queryset = get_activity_statistics(user)
+        activity_statistics = get_activity_statistic_dict(activity_queryset)
+        gathered_wastes = GeneralStatisticResultSerializer(
+            get_reports_statistic(user), many=True
+        ).data
+        data = (
+            {"gathered_waste": gathered_wastes}
+            | get_different_object_count_in_reports(user)
+            | activity_statistics
+        )
         return Response(data)

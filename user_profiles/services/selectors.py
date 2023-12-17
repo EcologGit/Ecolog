@@ -13,7 +13,7 @@ def get_annotate_by_content_type_and_point_id(user):
 
 def get_activity_statistics(user):
     query = user.reports.values("user_id__pk").annotate(
-        result_count=Count("rates__pk"),
+        rates_count=Count("rates__pk"),
         photo_count=Count(Case(When(photo="", then=None), default=1)),
         report_count=Count(1),
     )
