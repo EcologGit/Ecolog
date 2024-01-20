@@ -9,4 +9,5 @@ urlpatterns = [
     path('routes-search-line/', GetListRoutesObjectsApi.as_view()),
     path('events-search-line/', GetListEventsObjectsApi.as_view()),
     path('report/<int:pk>/', RetriveReportApi.as_view()),
+    path('edit/<int:pk>/', UpdateReportApi.as_view()),
 ]

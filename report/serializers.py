@@ -18,6 +18,7 @@ from rest_framework.exceptions import NotFound
 from django.contrib.auth import get_user_model
 from review.services.db_query import get_objects_with_avg_rates
 from django.db.models import Avg
+from report.util import get_content_type_and_content_object, update_m2m_related_fields
 
 User = get_user_model()
 
@@ -74,15 +75,6 @@ class CreateReportSerializer(serializers.ModelSerializer):
             "id_obj",
         )
 
-    @staticmethod
-    def get_content_type_and_content_object(type_obj, id_obj):
-        try:
-            model_obj = OBJECT_TYPE_MAP[type_obj]
-        except KeyError:
-            raise NotFound("Такого места уборки не существуют!")
-        model_instance = get_object_or_404(model_obj, pk=id_obj)
-        return ContentType.objects.get_for_model(model_obj), model_instance
-
     @transaction.atomic
     def create(self, validated_data):
         results_data = validated_data.pop("results")
@@ -90,7 +82,7 @@ class CreateReportSerializer(serializers.ModelSerializer):
         report_status = get_object_or_404(
             StatusesReport, name=validated_data.pop("report_status")
         )
-        type_obj, model_instance = self.get_content_type_and_content_object(
+        type_obj, model_instance = get_content_type_and_content_object(
             validated_data.pop("type_obj"), validated_data.pop("id_obj")
         )
 
@@ -227,3 +219,49 @@ class DetailReportSerializer(serializers.ModelSerializer):
 from eco.models import Reports, WasteTypes, Rates, Results
 
 """
+
+class UpdateResultsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Results
+        fields = (
+            "amount",
+            "waste_id",
+            "report_id",
+        )
+
+
+class UpdateReportSerializer(serializers.ModelSerializer):
+
+    rate = CreateRatesSerializer()
+    results = UpdateResultsSerializer(many=True)
+    report_status = serializers.CharField(max_length=64)
+    point_id = serializers.PrimaryKeyRelatedField(
+        required=False, queryset=SortPoints.objects.all()
+    )
+    type_obj = serializers.CharField()
+    id_obj = serializers.IntegerField()
+
+    def update(self, instance, validated_data):
+        update_m2m_related_fields(validated_data, Results, instance, 'results')
+        rate = Rates.objects.filter(report_id=instance)
+        if rate:
+            rate.delete()
+        new_rates = validated_data.pop('rate', None)
+        if new_rates:
+            Rates.objects.create(**new_rates, report_id=instance)
+        super().update(instance, validated_data)
+        return instance
+
+    class Meta:
+        model = Reports
+        fields = (
+            "description",
+            "photo",
+            "rate",
+            "results",
+            "user_id",
+            "report_status",
+            "point_id",
+            "type_obj",
+            "id_obj",
+        )

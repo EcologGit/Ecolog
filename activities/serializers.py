@@ -24,6 +24,7 @@ class UserReportSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             "username",
+            "public_name",
             "pk",
         )
 

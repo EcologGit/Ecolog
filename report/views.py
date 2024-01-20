@@ -11,10 +11,11 @@ from report.serializers import (
     SearchListNatureObjectsSerialzer,
     SearchListEventsSerialzer,
     DetailReportSerializer,
+    UpdateReportSerializer,
 )
-from report.util import first_el_from_request_data
-from rest_framework.generics import ListAPIView
-from eco.models import WasteTypes, SortPoints, NatureObjects, Routes, Events
+from report.util import prepare_data_report
+from rest_framework.generics import ListAPIView, UpdateAPIView
+from eco.models import Reports, WasteTypes, SortPoints, NatureObjects, Routes, Events
 from report.services.db_query import get_report_by_pk_or_404
 
 
@@ -23,18 +24,8 @@ class CreateReportApi(APIView):
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def prepare_data(self, request):
-        data = first_el_from_request_data(request.data)
-        rate_data = loads(request.data["rate"])
-        results_data = loads(request.data["results"])
-        return data | {
-            "user_id": request.user.id,
-            "rate": rate_data,
-            "results": results_data,
-        }
-
     def post(self, request, *args):
-        data = self.prepare_data(request)
+        data = prepare_data_report(request)
         serializer = CreateReportSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         report = serializer.create(serializer.validated_data)
@@ -44,8 +35,8 @@ class CreateReportApi(APIView):
 class RetriveReportApi(APIView):
     def get(self, request, *args, **kwargs):
         report = get_report_by_pk_or_404(kwargs["pk"])
-        return Response(DetailReportSerializer(report).data)
-
+        response = Response(DetailReportSerializer(report).data)
+        return response
 
 class GetListSortPointsApi(ListAPIView):
     serializer_class = SearchListSortPointSerialzer
@@ -70,3 +61,16 @@ class GetListRoutesObjectsApi(ListAPIView):
 class GetListEventsObjectsApi(ListAPIView):
     serializer_class = SearchListEventsSerialzer
     queryset = Events.objects.all()
+
+
+class UpdateReportApi(UpdateAPIView):
+    queryset = Reports.objects.all()
+    authentication_classes = (JWTAuthentication,)
+
+    def update(self, request, *args, **kwargs):
+        report = get_report_by_pk_or_404(kwargs.get('pk'))
+        data = prepare_data_report(request)
+        serializer = UpdateReportSerializer(data=data, instance=report)
+        serializer.is_valid(raise_exception=True)
+        report = serializer.update(report, serializer.validated_data)
+        return Response({"id": report.pk})
