@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from base.content_type_dicts import ReportContentTypeDict
 from eco.models import (
     Reports,
     Rates,
@@ -10,15 +11,11 @@ from eco.models import (
     Events,
 )
 from django.db import transaction
-from django.contrib.contenttypes.models import ContentType
 from eco.models import Reports, StatusesReport
 from django.shortcuts import get_object_or_404
-from review.config import OBJECT_TYPE_MAP
-from rest_framework.exceptions import NotFound
 from django.contrib.auth import get_user_model
-from review.services.db_query import get_objects_with_avg_rates
 from django.db.models import Avg
-from report.util import get_content_type_and_content_object, update_m2m_related_fields
+from report.util import get_content_type_and_content_object, update_report
 
 User = get_user_model()
 
@@ -188,6 +185,7 @@ class DetailReportSerializer(serializers.ModelSerializer):
 
     def get_obj(self, report):
         report_object = report.content_object
+        model_object = type(report_object)
         rates_obj = report_object.reports.values("object_id").annotate(
             avg_availability=Avg("rates__availability"),
             avg_beauty=Avg("rates__beauty"),
@@ -196,9 +194,11 @@ class DetailReportSerializer(serializers.ModelSerializer):
         info_obj = {
             "photo": report_object.photo.url,
             "name": report_object.name,
-            "locality": report_object.locality,
             "pk": report_object.pk,
             "rates": rates_obj[0] if rates_obj else [],
+            "type_obj": ReportContentTypeDict.get_type_string_by_model_or_404(
+                model_object
+            ),
         }
         return info_obj
 
@@ -220,6 +220,7 @@ from eco.models import Reports, WasteTypes, Rates, Results
 
 """
 
+
 class UpdateResultsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Results
@@ -231,7 +232,6 @@ class UpdateResultsSerializer(serializers.ModelSerializer):
 
 
 class UpdateReportSerializer(serializers.ModelSerializer):
-
     rate = CreateRatesSerializer()
     results = UpdateResultsSerializer(many=True)
     report_status = serializers.CharField(max_length=64)
@@ -242,13 +242,7 @@ class UpdateReportSerializer(serializers.ModelSerializer):
     id_obj = serializers.IntegerField()
 
     def update(self, instance, validated_data):
-        update_m2m_related_fields(validated_data, Results, instance, 'results')
-        rate = Rates.objects.filter(report_id=instance)
-        if rate:
-            rate.delete()
-        new_rates = validated_data.pop('rate', None)
-        if new_rates:
-            Rates.objects.create(**new_rates, report_id=instance)
+        update_report(instance, validated_data)
         super().update(instance, validated_data)
         return instance
 

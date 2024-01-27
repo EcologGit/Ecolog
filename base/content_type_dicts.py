@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from eco.models import NatureObjects, Routes, Events, SortPoints
 from abc import ABC, abstractmethod
 from rest_framework.exceptions import NotFound
@@ -34,6 +35,18 @@ class ContentTypeDict(ABC):
         """
         content_type = cls.get_content_type_object_or_404(object_type)
         return queryset.filter(content_type=content_type)
+
+    @classmethod
+    def get_type_string_by_model_or_404(cls, model):
+        for key, val in cls.content_type_dict.items():
+            if val == model:
+                return key
+        raise NotFound()
+
+    @classmethod
+    def get_obj_or_404(cls, type_obj, **kwargs):
+        model = cls.get_model_or_not_found_error(type_obj)
+        return get_object_or_404(model, **kwargs)
 
 
 class ReportContentTypeDict(ContentTypeDict):

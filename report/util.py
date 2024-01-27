@@ -1,6 +1,8 @@
 from typing import Any
 from json import loads
 from django.contrib.contenttypes.models import ContentType
+from base.content_type_dicts import ReportContentTypeDict
+from eco.models import Rates, Results
 from review.config import OBJECT_TYPE_MAP
 from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
@@ -25,13 +27,14 @@ def prepare_data_report(request):
         "results": results_data,
     }
 
+
 def get_content_type_and_content_object(type_obj, id_obj):
-        try:
-            model_obj = OBJECT_TYPE_MAP[type_obj]
-        except KeyError:
-            raise NotFound("Такого места уборки не существуют!")
-        model_instance = get_object_or_404(model_obj, pk=id_obj)
-        return ContentType.objects.get_for_model(model_obj), model_instance
+    try:
+        model_obj = OBJECT_TYPE_MAP[type_obj]
+    except KeyError:
+        raise NotFound("Такого места уборки не существуют!")
+    model_instance = get_object_or_404(model_obj, pk=id_obj)
+    return ContentType.objects.get_for_model(model_obj), model_instance
 
 
 def update_m2m_related_fields(validated_data, model, instance, name):
@@ -40,4 +43,18 @@ def update_m2m_related_fields(validated_data, model, instance, name):
         prev_values.all().delete()
     for val in validated_data.pop(name, []):
         model.objects.create(**val)
-     
+
+
+def update_report(instance, validated_data):
+    type_obj = validated_data.pop("type_obj", None)
+    id_obj = validated_data.pop("id_obj", None)
+    update_m2m_related_fields(validated_data, Results, instance, "results")
+    rate = Rates.objects.filter(report_id=instance)
+    if rate:
+        rate.delete()
+    new_rates = validated_data.pop("rate", None)
+    if new_rates:
+        Rates.objects.create(**new_rates, report_id=instance)
+    obj = ReportContentTypeDict.get_obj_or_404(type_obj, pk=id_obj)
+    instance.content_object = obj
+    instance.save()
