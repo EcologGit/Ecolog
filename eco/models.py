@@ -11,9 +11,13 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.core.validators import MaxValueValidator, MinValueValidator
 from smart_selects.db_fields import ChainedForeignKey
+from django.core.validators import RegexValidator
 
 
 class CustomUser(AbstractUser):
+    phone_number_validator = RegexValidator(
+        regex=r"\+?(?:7|8)9\d{9}", message="not valid phone number!"
+    )
     SEX = (
         ("M", "Мужской"),
         ("F", "Женский"),
@@ -24,6 +28,10 @@ class CustomUser(AbstractUser):
     locality = models.CharField(max_length=100, blank=True)
     photo = models.ImageField(blank=True, upload_to="user/", max_length=3000)
     created_at = models.DateTimeField(auto_now_add=True)
+    phone_number = models.CharField(
+        max_length=12, validators=(phone_number_validator,), null=True, blank=True
+    )
+    kind_of_activity = models.CharField(max_length=100, null=True, blank=True)
 
 
 class Admarea(models.Model):

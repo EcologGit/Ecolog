@@ -179,6 +179,7 @@ class DetailReportSerializer(serializers.ModelSerializer):
     point_id = SortPointDetailReportSerializer()
     obj = serializers.SerializerMethodField()
     photo = serializers.SerializerMethodField()
+    status_id_r = serializers.SlugRelatedField(slug_field='name', read_only=True)
 
     def get_photo(self, object):
         return object.photo.url if object.photo else None
@@ -212,6 +213,7 @@ class DetailReportSerializer(serializers.ModelSerializer):
             "user_id",
             "point_id",
             "obj",
+            'status_id_r',
         )
 
 

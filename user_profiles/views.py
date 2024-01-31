@@ -4,10 +4,11 @@ from activities.serializers import (
     ListReportsSerializer,
 )
 from base.shortcuts import get_user_or_404
+from eco.models import CustomUser
 from review.services.db_query import get_reports_statistic
-from user_profiles.serializers import UserProfileInfoSerializer
+from user_profiles.serializers import UserProfileDataUpdateSerializer, UserProfileInfoSerializer
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import get_user_model
@@ -73,3 +74,8 @@ class GetUserStatistic(RetrieveAPIView):
             | activity_statistics
         )
         return Response(data)
+
+
+class UpdateProfileInfo(UpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserProfileDataUpdateSerializer

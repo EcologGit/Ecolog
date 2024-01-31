@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from eco.models import NatureObjects, Reports
+from eco.models import CustomUser, NatureObjects, Reports
 from eco.models import (
     Routes,
     StatusesEvent,
@@ -29,7 +29,27 @@ class UserProfileInfoSerializer(serializers.ModelSerializer):
             "username",
             "locality",
             "birth_date",
+            "sex",
+            'email',
+            'phone_number',
+            'kind_of_activity',
         )
 
 class UserStatisticSerializer(serializers.ModelSerializer):
     pass
+
+class UserProfileDataUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CustomUser
+        fields = (
+            'sex',
+            'birth_date',
+            'locality',
+            'first_name',
+            'last_name',
+            'birth_date',
+            'email',
+            'phone_number',
+            'kind_of_activity',
+        )

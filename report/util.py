@@ -2,7 +2,7 @@ from typing import Any
 from json import loads
 from django.contrib.contenttypes.models import ContentType
 from base.content_type_dicts import ReportContentTypeDict
-from eco.models import Rates, Results
+from eco.models import Rates, Results, StatusesReport
 from review.config import OBJECT_TYPE_MAP
 from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
@@ -48,6 +48,10 @@ def update_m2m_related_fields(validated_data, model, instance, name):
 def update_report(instance, validated_data):
     type_obj = validated_data.pop("type_obj", None)
     id_obj = validated_data.pop("id_obj", None)
+    status = validated_data.pop('report_status', None)
+    if status:
+        status_id_r = get_object_or_404(StatusesReport, name=status)
+        instance.status_id_r = status_id_r
     update_m2m_related_fields(validated_data, Results, instance, "results")
     rate = Rates.objects.filter(report_id=instance)
     if rate:
