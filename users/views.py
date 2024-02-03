@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import (
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.translation import gettext_lazy as _
 from Ecolog_django.settings import SECURE_COOKIE
-from users.services.utils import change_user_password_with_logout_jwt_token
+from users.services.utils import add_refresh_token_to_blacklist, change_user_password_with_logout_jwt_token
 from .serializers import CookieTokenRefreshSerializer, CreateProfileUserSerializer
 from rest_framework.views import APIView
 from rest_framework.exceptions import APIException, ValidationError
@@ -83,13 +83,7 @@ class LogoutWithCookieApi(APIView):
 
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get("refresh_token")
-        if not refresh_token:
-            raise ValidationError("Refresh token not in cookie")
-        refresh = self.token_class(refresh_token)
-        try:
-            refresh.blacklist()
-        except AttributeError:
-            pass
+        add_refresh_token_to_blacklist(self.token_class, refresh_token)
         return Response({})
 
 

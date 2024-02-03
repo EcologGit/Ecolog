@@ -28,4 +28,3 @@ def change_user_password_with_logout_jwt_token(
     old_password = data.get("old_password")
     change_user_password_or_raise_error(user, old_password, new_password)
     add_refresh_token_to_blacklist(refresh_token_class, refresh_token)
-
