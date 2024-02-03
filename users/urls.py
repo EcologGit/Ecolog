@@ -10,4 +10,5 @@ urlpatterns = [
 
     path('api/create_user/', CreateProfileApi.as_view()),
     path('api/logout-with-cookies', LogoutWithCookieApi.as_view()),
+    path('api/change-password/',  ChangeUserPasswordView.as_view())
 ]
