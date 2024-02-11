@@ -70,27 +70,27 @@ class ReportsCountFilter(BaseFilterBackend):
 
 class RouteLengthFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
-        if length_great_then := request.query_params.get("length_greater_then", None):
+        if length_great_then := request.query_params.get("length_greater_or_equal", None):
             length_great_then = get_number_or_validation_400(
-                length_great_then, "length_greater_then"
+                length_great_then, "length_greater_or_equal"
             )
-            queryset = queryset.filter(length__gt=length_great_then)
-        if length_less_than := request.query_params.get("length_less_than", None):
+            queryset = queryset.filter(length__gte=length_great_then)
+        if length_less_than := request.query_params.get("length_less_or_equal", None):
             length_less_than = get_number_or_validation_400(
-                length_less_than, "length_less_than"
+                length_less_than, "length_less_or_equal"
             )
-            queryset = queryset.filter(length__lt=length_less_than)
+            queryset = queryset.filter(length__lte=length_less_than)
         return queryset
 
 
 class EventTimeFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         if time_start := request.query_params.get("time_start", None):
-            time_start = get_datetime_or_400_from_str(time_start, "time_start")
+            time_start = get_datetime_or_400_from_str(time_start, "time_start", format="%Y-%m-%d")
             print(time_start)
             queryset = queryset.filter(time_start__gte=time_start)
         if time_of_close := request.query_params.get("time_of_close", None):
-            time_of_close = get_datetime_or_400_from_str(time_of_close, "time_of_close")
+            time_of_close = get_datetime_or_400_from_str(time_of_close, "time_of_close", format="%Y-%m-%d")
             queryset = queryset.filter(time_of_close__lte=time_of_close)
         return queryset
 
@@ -111,7 +111,7 @@ class EventStatusFilter(BaseFilterBackend):
 
 class WasteTypesFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
-        if wast_types := request.query_params.get("wast_types"):
+        if wast_types := request.query_params.get("wast_types[]"):
             union_queries = []
             wast_types = wast_types.split(",")
             for wast in wast_types:
