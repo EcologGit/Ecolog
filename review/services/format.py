@@ -1,4 +1,5 @@
 from django.db.models import QuerySet
+from base.authentication import JWTAuthenticationWithoutRaiseError
 from favorites.services.selectors import get_is_favorite_exists_for_user
 from review.config import OBJECT_TYPE_MAP
 from rest_framework.exceptions import NotFound, APIException
@@ -24,7 +25,7 @@ class ObjectInfoAndReportStatisitcView(APIView):
     serializer_class = None
     model = None
     object_name = "object_info"
-    authentication_classes = (JWTAuthentication,)
+    authentication_classes = (JWTAuthenticationWithoutRaiseError,)
 
     def get(self, request, *args, **kwargs):
         obj = get_one_object_with_rates_by_id_or_not_found_error(
