@@ -1,8 +1,8 @@
+from base.authentication import JWTAuthenticationWithoutRaiseError
 from favorites.services.selectors import get_is_favourite_for_queryset_if_user_auth
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class ObjectsMixin:
-    authentication_classes = (JWTAuthentication,)
+    authentication_classes = (JWTAuthenticationWithoutRaiseError,)
     """
     В этот миксин вынесены общие методы для апишек, которые отдают списки объектов в обзорах,
     должен стоят самым первым в линни наследования!

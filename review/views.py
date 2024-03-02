@@ -1,3 +1,4 @@
+from base.authentication import JWTAuthenticationWithoutRaiseError
 from favorites.services.selectors import (
     get_favorite_or_404,
     get_is_favorite_exists_for_user,
@@ -65,7 +66,6 @@ from review.filters import (
     WasteTypesFilter,
 )
 from review.services.mixins import ObjectsMixin
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Create your views here.
 
@@ -119,11 +119,11 @@ class GetEventsView(ObjectsMixin, ListAPIView):
     search_fields = ("name",)
     base_queryset = get_events_list()
     object_type = "events"
-    authentication_classes = (JWTAuthentication,)
+    authentication_classes = (JWTAuthenticationWithoutRaiseError,)
 
 
 class GetOneEventView(APIView):
-    authentication_classes = (JWTAuthentication,)
+    authentication_classes = (JWTAuthenticationWithoutRaiseError,)
 
     def get(self, request, *args, **kwargs):
         event_id = kwargs["id"]
@@ -184,7 +184,7 @@ class GetOneGarbagePointView(RetrieveAPIView):
     lookup_field = "pk"
     lookup_url_kwarg = "id"
     serializer_class = OneSortPointSerializer
-    authentication_classes = (JWTAuthentication,)
+    authentication_classes = (JWTAuthenticationWithoutRaiseError,)
 
     def get(self, request, *args, **kwargs):
         sort_point_id = kwargs["id"]

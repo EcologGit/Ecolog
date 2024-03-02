@@ -1,7 +1,7 @@
 from eco.models import Routes, NatureObjects, Events
 
 OBJECT_TYPE_MAP = {
-        'nature_object': NatureObjects,
+        'place': NatureObjects,
         'route': Routes,
         'event': Events,
     }
